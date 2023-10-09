@@ -1,9 +1,6 @@
-from datetime import datetime
-
 import jax
 import jax.numpy as jnp
 from jax import jit, lax, random
-from tqdm import tqdm
 
 GRID_SIZE = jnp.array([8, 8], dtype=jnp.int32)
 GOAL_POSITION = jnp.array([6, 1], dtype=jnp.int32)
@@ -123,39 +120,3 @@ def update_q_values(state, action, reward, next_state, q_values, discount_factor
         return terminal_update_fn()
     else:
         return update_fn()
-
-
-def main(n_episodes):
-    key = jax.random.PRNGKey(RANDOM_SEED)
-    q_values = jnp.zeros([GRID_SIZE[0], GRID_SIZE[1], NUM_ACTIONS])
-
-    for episode in tqdm(range(n_episodes)):
-        state = reset()
-        counter = 0
-        start_time = datetime.now()
-
-        while not is_done(state=state, goal_position=GOAL_POSITION):
-            action, key = epsilon_greedy(
-                state=state, q_values=q_values, epsilon=epsilon, key=key
-            )
-            next_state = update_state(state=state, action=action, movements=movements)
-            q_values = update_q_values(
-                state=state,
-                action=action,
-                reward=REWARD,
-                next_state=next_state,
-                q_values=q_values,
-                discount_factor=discount_factor,
-            )
-            counter += 1
-            state = next_state
-
-        runtime = datetime.now() - start_time
-        print(
-            f"Found the path in {counter} steps and {runtime}s, episode: {episode+1}/{n_episodes}"
-        )
-        print(jnp.max(q_values, axis=1))
-
-
-if __name__ == "__main__":
-    main(3)

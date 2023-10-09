@@ -41,7 +41,7 @@ class GridWorld(BaseEnv):
     @partial(jit, static_argnums=(0,))
     def step(self, env_state, action):
         state, key = env_state
-        new_state = jnp.clip(state + action, jnp.array([0, 0]), self.grid_size)
+        new_state = jnp.clip(jnp.add(state, action), jnp.array([0, 0]), self.grid_size)
         reward, done = self._get_reward_done(new_state)
 
         env_state = new_state, key

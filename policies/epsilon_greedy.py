@@ -15,7 +15,7 @@ class EpsilonGreedy(BasePolicy):
         self.epsilon = epsilon
 
     @partial(jit, static_argnums=(0, 2))
-    def call(self, key, n_actions, q_values):
+    def call(self, key, n_actions, state, q_values):
         def _random_action_fn(subkey):
             return random.choice(subkey, jnp.arange(n_actions))
 
@@ -23,9 +23,10 @@ class EpsilonGreedy(BasePolicy):
             """
             Selects the greedy action with random tie-break
             """
-            q_max = jnp.max(q_values)
-            q_max_mask = jnp.equal(q_values, q_max)
-            p = q_max_mask / q_max_mask.sum()
+            q = q_values[state[0], state[1]]
+            q_max = jnp.max(q, axis=-1)
+            q_max_mask = jnp.equal(q, q_max)
+            p = jnp.divide(q_max_mask, q_max_mask.sum())
             choice = random.choice(subkey, jnp.arange(n_actions), p=p)
             return jnp.int32(choice)
 
