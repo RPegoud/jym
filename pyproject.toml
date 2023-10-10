@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "jax-rl"
+version = "0.1.0"
+description = ""
+authors = ["Ryan Pégoud <ryanpegoud@gmail.com>"]
+readme = "README.md"
+packages = [{include = "grind_arc"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "^2.1.0"
+numpy = "^1.25.2"
+matplotlib = "^3.7.2"
+plotly = "^5.16.1"
+jax = "^0.4.14"
+jaxlib = "^0.4.14"
+poethepoet = "^0.22.1"
+black = "^23.7.0"
+isort = "^5.12.0"
+ruff = "^0.0.287"
+torchvision = "^0.15.2"
+tqdm = "^4.66.1"
+gymnasium = "^0.29.1"
+dm-haiku = "^0.0.10"
+optax = "^0.1.7"
+nbformat = "^5.9.2"
+
+[tool.ruff]
+extend-ignore = ["E501"]
+extend-exclude = ["__init__.py"]
+line-length = 86
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.25.2"
+pytest = "^7.4.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poe.tasks]
+format = { cmd = "black .", help = "Check code style and format it" }
+format_imports = { cmd = "isort .", help = "Sort imports" }
+lint = { cmd = "ruff check . --fix", help = "Perform linting on your code" }
+format_and_lint = ["format", "format_imports", "lint"]
