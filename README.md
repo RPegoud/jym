@@ -35,6 +35,47 @@ This repository contains JAX implementations of several RL algorithms and enviro
 | Dyna-Q     | Model-based | 101                  | *coming soon*                      |
 | Dyna-Q+    | Model-based | 101                  | *coming soon*                      |
 
+## 💾 Installation
+
+To install and set up the project, follow these steps:
+
+1. Clone the repository to your local machine:
+
+   ```bash
+   git clone https://github.com/RPegoud/jax_rl.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd jax_rl
+   ```
+
+3. Install Poetry (if not already installed):
+
+   ```bash
+   python -m pip install poetry
+   ```
+
+4. Install project dependencies using Poetry:
+
+   ```bash
+   poetry install
+   ```
+
+5. Activate the virtual environment created by Poetry:
+
+   ```bash
+   poetry shell
+   ```
+
+## Use
+
+1. Modify the main.py file depending on the test you want to perform and run:
+
+   ```bash
+   python main.py
+
 ## 📝 References
 
 * [***Writing an RL Environment in JAX***](https://medium.com/@ngoodger_7766/writing-an-rl-environment-in-jax-9f74338898ba), Nikolaj Goodger, Medium, Nov 14, 2021

@@ -24,6 +24,7 @@ gymnasium = "^0.29.1"
 dm-haiku = "^0.0.10"
 optax = "^0.1.7"
 nbformat = "^5.9.2"
+pytest = "^7.4.2"
 
 [tool.ruff]
 extend-ignore = ["E501"]
