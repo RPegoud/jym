@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Ryan Pégoud <ryanpegoud@gmail.com>"]
 readme = "README.md"
-packages = [{include = "grind_arc"}]
+packages = [{include = "jax-rl"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
