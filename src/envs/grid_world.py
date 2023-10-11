@@ -13,6 +13,7 @@ class GridWorld(BaseEnv):
         self.initial_state = initial_state
         self.goal_state = goal_state
         self.grid_size = grid_size
+        self.movements = jnp.array([[0, 1], [1, 0], [0, -1], [-1, 0]])
 
     def __repr__(self) -> str:
         return str(self.__dict__)
@@ -38,9 +39,10 @@ class GridWorld(BaseEnv):
 
         return reward, done
 
-    @partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0))
     def step(self, env_state, action):
         state, key = env_state
+        action = self.movements[action]
         new_state = jnp.clip(jnp.add(state, action), jnp.array([0, 0]), self.grid_size)
         reward, done = self._get_reward_done(new_state)
 
