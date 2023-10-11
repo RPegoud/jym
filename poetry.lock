@@ -784,6 +784,21 @@ minimum-jaxlib = ["jaxlib (==0.4.11)"]
 tpu = ["jaxlib (==0.4.14)", "libtpu-nightly (==0.1.dev20230727)"]
 
 [[package]]
+name = "jax-tqdm"
+version = "0.1.1"
+description = "Tqdm progress bar for JAX scans and loops"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "jax_tqdm-0.1.1-py3-none-any.whl", hash = "sha256:5f3ca93edd82839c35f745b58005f602a5177f9ea170a4cd6d42b362e01b3942"},
+    {file = "jax_tqdm-0.1.1.tar.gz", hash = "sha256:4ae95a1920140e28467e9b187e2ca8c11a3d385e2a0d6bb608ecb62e2ad36c78"},
+]
+
+[package.dependencies]
+jax = ">=0.3.5"
+tqdm = ">=4.64.1,<5.0.0"
+
+[[package]]
 name = "jaxlib"
 version = "0.4.14"
 description = "XLA library for JAX"
@@ -2411,4 +2426,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "bd60ba3fc31b0036066b65eede2d77fc6a8d7ae1db3d5f59f190f91886418594"
+content-hash = "09dd3b5d302e648392ca2d972396ed31ff735c499fcb1479ecc41b0aade2083e"
