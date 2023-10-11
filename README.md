@@ -1,16 +1,16 @@
-# **JAX-RL**
+# **JAX-RL** <img src='https://upload.wikimedia.org/wikipedia/commons/8/86/Google_JAX_logo.svg' alt="Environment" width="50" />
 
 This repository contains JAX implementations of several RL algorithms and environments.
 
 ## 🌟 ***Key Features***
 
-* 🐍 <img src='https://upload.wikimedia.org/wikipedia/commons/8/86/Google_JAX_logo.svg'
-  alt="Environment" width="25" /> Clean and beginner-friendly implementation of RL algorithms in JAX
-* ⚡ Vectorized environments for lightning fast training
-* 🤖 Implemented Algorithms: Q-Learning, *(coming soon: DQN, DDQN, Dyna-Q, Dyna-Q+)*
-* 📊 Plotly graphs enabling state value visualization throughout training and averaged performance reports
-* ✅ Easy installation using Poetry virtual environments
-* ✍️ All implementations will be detailed step by step [here](https://machine-learning-blog.vercel.app)
+* 🐍  **Clean** and **beginner-friendly** implementation of **Reinforcement Learning algorithms** in **JAX**
+* ⚡ **Vectorized environments** for lightning-fast training
+* 🤖 Implemented Algorithms: **Q-Learning**, *(coming soon: DQN, DDQN, Dyna-Q, Dyna-Q+)*
+* 👩‍👨‍👦‍👧 **Parallel agent training** for statistically significant results
+* 📊 **Plotly graphs** enabling state value visualization throughout training and averaged performance reports
+* ✅ **Easy installation** using **Poetry** virtual environments
+* ✍️ All implementations will be detailed **step by step [here](<https://machine-learning-blog.vercel.app>)**
 
 ## ✅ ***Progress***
 
@@ -29,11 +29,11 @@ This repository contains JAX implementations of several RL algorithms and enviro
 
 ## 🚀 ***Performances***
 
-| Algorithm  | Type        | Updates per step     | Runtime  |
-|:---------- | ----------- | -------------------- |:---------------------------------- |
-| Q-learning | Model-free  | 1                    | *coming soon*                      |
-| Dyna-Q     | Model-based | 101                  | *coming soon*                      |
-| Dyna-Q+    | Model-based | 101                  | *coming soon*                      |
+| Algorithm  | Type        | Environment | Updates per step | Steps/second (single CPU) | Number of parallel agents | Number of training steps | Runtime (s) |
+|:---------- | ----------- |:----------- | ---------------- |:------------------------- | ------------------------- | ------------------------ | ----------- |
+| Q-learning | Model-free  | GridWorld   | 1                | 1.500.000                 | 30                        | 100.000                  | 2           |
+| Dyna-Q     | Model-based |             |                  | *coming soon*             |                           |                          |             |
+| Dyna-Q+    | Model-based |             |                  | *coming soon*             |                           |                          |             |
 
 ## 💾 Installation
 
