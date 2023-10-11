@@ -38,7 +38,7 @@ class Q_learning(BaseAgent):
     #         update_fn,
     #     )
 
-    # TODO: add updates for terminal state
+    # TODO: add terminal state update
     @partial(jit, static_argnums=(0,))
     def update(self, state, action, reward, done, next_state, q_values):
         update = q_values[state[0], state[1], action]
