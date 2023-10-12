@@ -22,6 +22,7 @@ class EpsilonGreedy(BasePolicy):
         def _greedy_action_fn(subkey):
             """
             Selects the greedy action with random tie-break
+            If multiple Q-values are equal, sample uniformly from their indexes
             """
             q = q_values[state[0], state[1]]
             q_max = jnp.max(q, axis=-1)
