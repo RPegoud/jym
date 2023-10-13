@@ -39,7 +39,7 @@ class GridWorld(BaseEnv):
 
         return reward, done
 
-    @partial(jit, static_argnums=(0))
+    @partial(jit, static_argnames=("self"))
     def step(self, env_state, action):
         state, key = env_state
         action = self.movements[action]
@@ -52,7 +52,6 @@ class GridWorld(BaseEnv):
 
         return env_state, self._get_obs(new_state), reward, done
 
-    @partial(jit, static_argnums=(0,))
     def reset(self, key):
         env_state = self._reset(key)
         new_state = env_state[0]
