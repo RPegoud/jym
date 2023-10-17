@@ -10,30 +10,33 @@ This repository contains JAX implementations of several RL algorithms and enviro
 * 👩‍👨‍👦‍👧 **Parallel agent training** for statistically significant results
 * 📊 **Plotly graphs** enabling state value visualization throughout training and averaged performance reports
 * ✅ **Easy installation** using **Poetry** virtual environments
-* ✍️ All implementations will be detailed **step by step [here](<https://machine-learning-blog.vercel.app>)**
+* ✍️ **Code walkthroughs**:
+  * [***Vectorize and Parallelize RL Environments with JAX: Q-learning at the Speed of Light⚡***](https://towardsdatascience.com/vectorize-and-parallelize-rl-environments-with-jax-q-learning-at-the-speed-of-light-49d07373adf5), published in ***Towards Data Science***
 
 ## ✅ ***Progress***
 
 * 🤖 Algorithms:
   * Q-learning
+  * Expected SARSA
 * 🌍 Environments:
   * GridWorld
 
 ## ⌛ ***Coming Soon***
 
 * 🤖 Algorithms:
+  * Double Q-learning
   * DQN
   * Dyna-Q, Dyna-Q+
 * 🌍 Environments:
   * CartPole
 
-## 🚀 ***Performances***
+<!-- ## 🚀 ***Performances***
 
 | Algorithm  | Type        | Environment | Updates per step | Steps/second (single CPU) | Number of parallel agents | Number of training steps | Runtime (s) |
 |:---------- | ----------- |:----------- | ---------------- |:------------------------- | ------------------------- | ------------------------ | ----------- |
 | Q-learning | Model-free  | GridWorld   | 1                | 1.500.000                 | 30                        | 100.000                  | 2           |
 | Dyna-Q     | Model-based |             |                  | *coming soon*             |                           |                          |             |
-| Dyna-Q+    | Model-based |             |                  | *coming soon*             |                           |                          |             |
+| Dyna-Q+    | Model-based |             |                  | *coming soon*             |                           |                          |             | -->
 
 ## 💾 Installation
 
@@ -78,6 +81,7 @@ To install and set up the project, follow these steps:
 
 ## 📝 References
 
+* [***Reinforcement Learning: An Introduction***](http://incompleteideas.net/book/the-book-2nd.html) Sutton, R. S., & Barto, A. G., The MIT Press., 2018
 * [***Writing an RL Environment in JAX***](https://medium.com/@ngoodger_7766/writing-an-rl-environment-in-jax-9f74338898ba), Nikolaj Goodger, Medium, Nov 14, 2021
 * [***JAX Tutorial Playlist***](https://www.youtube.com/watch?v=SstuvS-tVc0&list=PLBoQnSflObckOARbMK9Lt98Id0AKcZurq), Aleksa Gordić - The AI Epiphany, YouTube, 2022
 
