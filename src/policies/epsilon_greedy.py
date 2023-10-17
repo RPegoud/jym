@@ -24,7 +24,7 @@ class EpsilonGreedy(BasePolicy):
             Selects the greedy action with random tie-break
             If multiple Q-values are equal, sample uniformly from their indexes
             """
-            q = q_values[state[0], state[1]]
+            q = q_values.at[tuple(state)].get()
             q_max = jnp.max(q, axis=-1)
             q_max_mask = jnp.equal(q, q_max)
             p = jnp.divide(q_max_mask, q_max_mask.sum())

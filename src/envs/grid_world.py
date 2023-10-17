@@ -1,6 +1,7 @@
 from functools import partial
 
 import jax.numpy as jnp
+import jax.random as random
 from jax import jit, lax
 
 from .base_env import BaseEnv
@@ -19,11 +20,27 @@ class GridWorld(BaseEnv):
         return str(self.__dict__)
 
     def _get_obs(self, state):
+        """
+        The state is fully observable, it doesn't require processing
+        """
         return state
 
+    @partial(jit, static_argnums=0)
     def _reset(self, key):
-        return self.initial_state, key
+        """
+        Random initialization
+        """
+        initial_state = random.randint(
+            key,
+            (2,),
+            minval=jnp.array([3, 3]),
+            maxval=jnp.array([self.grid_size[0], self.grid_size[1]]),
+        )
+        key, sub_key = random.split(key)
 
+        return initial_state, sub_key
+
+    @partial(jit, static_argnums=0)
     def _reset_if_done(self, env_state, done):
         key = env_state[1]
         return lax.cond(
@@ -33,6 +50,7 @@ class GridWorld(BaseEnv):
             key,
         )
 
+    @partial(jit, static_argnums=0)
     def _get_reward_done(self, new_state):
         done = jnp.all(new_state == self.goal_state)
         reward = jnp.int32(done)
