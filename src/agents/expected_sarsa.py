@@ -29,8 +29,8 @@ class Expected_Sarsa(BaseAgent):
 
     @partial(jit, static_argnums=(0,))
     def update(self, state, action, reward, done, next_state, q_values, temperature=1):
-        update = q_values[tuple(jnp.append(state, action))]
-        update += self.learning_rate * (
+        target = q_values[tuple(jnp.append(state, action))]
+        target += self.learning_rate * (
             reward
             + self.discount
             * jnp.mean(
@@ -40,9 +40,9 @@ class Expected_Sarsa(BaseAgent):
                     temperature,
                 ),
             )
-            - update
+            - target
         )
-        return q_values.at[tuple(jnp.append(state, action))].set(update)
+        return q_values.at[tuple(jnp.append(state, action))].set(target)
 
     def act(self):
         pass

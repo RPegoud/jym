@@ -6,7 +6,6 @@ This repository contains JAX implementations of several RL algorithms and enviro
 
 * 🐍  **Clean** and **beginner-friendly** implementation of **Reinforcement Learning algorithms** in **JAX**
 * ⚡ **Vectorized environments** for lightning-fast training
-* 🤖 Implemented Algorithms: **Q-Learning**, *(coming soon: DQN, DDQN, Dyna-Q, Dyna-Q+)*
 * 👩‍👨‍👦‍👧 **Parallel agent training** for statistically significant results
 * 📊 **Plotly graphs** enabling state value visualization throughout training and averaged performance reports
 * ✅ **Easy installation** using **Poetry** virtual environments
@@ -18,16 +17,18 @@ This repository contains JAX implementations of several RL algorithms and enviro
 * 🤖 Algorithms:
   * Q-learning
   * Expected SARSA
+  * Double Q-learning
 * 🌍 Environments:
   * GridWorld
 
 ## ⌛ ***Coming Soon***
 
 * 🤖 Algorithms:
-  * Double Q-learning
-  * DQN
+  * Deep Q Networks (DQN)
   * Dyna-Q, Dyna-Q+
 * 🌍 Environments:
+  * Cliff Walking
+  * Frozen Lake
   * CartPole
 
 <!-- ## 🚀 ***Performances***

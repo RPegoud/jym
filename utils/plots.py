@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 
 
@@ -94,4 +96,10 @@ def animated_heatmap(
         ]
     )
 
+    fig.show()
+
+
+def plot_path(obs):
+    df_obs = pd.DataFrame(obs)
+    fig = px.imshow((pd.crosstab(df_obs[0], df_obs[1])), title="State visit count")
     fig.show()
