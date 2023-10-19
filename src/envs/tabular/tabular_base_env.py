@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class BaseEnv(ABC):
+class TabularBaseEnv(ABC):
     def __init__(self) -> None:
         pass
 

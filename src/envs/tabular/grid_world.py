@@ -4,10 +4,10 @@ import jax.numpy as jnp
 import jax.random as random
 from jax import jit, lax
 
-from .base_env import BaseEnv
+from .tabular_base_env import TabularBaseEnv
 
 
-class GridWorld(BaseEnv):
+class GridWorld(TabularBaseEnv):
     def __init__(
         self,
         initial_state: jnp.array,
