@@ -1,7 +1,7 @@
 import jax.numpy as jnp
 from jax import jit, random, vmap
 
-from src.policies import EpsilonGreedy
+from src.tabular import EpsilonGreedy
 
 SEED = 0
 N_ENV = 10
