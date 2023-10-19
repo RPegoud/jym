@@ -10,5 +10,5 @@ class BasePolicy(ABC):
         return self.call(*args, **kwargs)
 
     @abstractmethod
-    def call(self, key, q_values):
+    def call(self, key, n_actions, state, q_values):
         pass

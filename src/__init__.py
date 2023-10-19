@@ -1,3 +1,8 @@
-from .agents import BaseAgent, Double_Q_learning, Expected_Sarsa, Q_learning
-from .envs import BaseEnv, GridWorld
-from .policies import BasePolicy, DoubleEpsilonGreedy, EpsilonGreedy, Softmax_policy
+from .agents import Double_Q_learning, Expected_Sarsa, Q_learning, SimpleBandit
+from .envs import BanditsBaseEnv, GridWorld, K_armed_bandits, TabularBaseEnv
+from .policies import (
+    BanditEpsilonGreedy,
+    DoubleEpsilonGreedy,
+    EpsilonGreedy,
+    Softmax_policy,
+)

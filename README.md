@@ -15,17 +15,27 @@ This repository contains JAX implementations of several RL algorithms and enviro
 ## ✅ ***Progress***
 
 * 🤖 Algorithms:
-  * Q-learning
-  * Expected SARSA
-  * Double Q-learning
+  * Bandits
+    * Simple Bandits ($\epsilon$-Greedy policy)
+  * Tabular
+    * Q-learning
+    * Expected SARSA
+    * Double Q-learning
 * 🌍 Environments:
-  * GridWorld
+  * Bandits
+    * Casino *(fancy name for K-armed Bandits)*
+  * Tabular
+    * GridWorld
 
 ## ⌛ ***Coming Soon***
 
 * 🤖 Algorithms:
-  * Deep Q Networks (DQN)
-  * Dyna-Q, Dyna-Q+
+  * Bandits:
+    * UCB (Upper Confidence Bound)
+  * Tabular:
+    * Dyna-Q, Dyna-Q+
+  * Deep RL:
+    * Deep Q Network (DQN)
 * 🌍 Environments:
   * Cliff Walking
   * Frozen Lake
