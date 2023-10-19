@@ -8,12 +8,19 @@ from .base_env import BaseEnv
 
 
 class GridWorld(BaseEnv):
-    def __init__(self, initial_state, goal_state, grid_size) -> None:
+    def __init__(
+        self,
+        initial_state: jnp.array,
+        goal_state: jnp.array,
+        grid_size: jnp.array,
+        stochastic_reset: bool = False,
+    ) -> None:
         super(GridWorld, self).__init__()
 
         self.initial_state = initial_state
         self.goal_state = goal_state
         self.grid_size = grid_size
+        self.stochastic_reset = stochastic_reset
         self.movements = jnp.array([[0, 1], [1, 0], [0, -1], [-1, 0]])
 
     def __repr__(self) -> str:
@@ -28,17 +35,30 @@ class GridWorld(BaseEnv):
     @partial(jit, static_argnums=0)
     def _reset(self, key):
         """
-        Random initialization
+        Resets an agent at the end of an episode
+        If stochastic_reset is True, uniformly sample an initial state
+        from a set of coordinates
         """
-        initial_state = random.randint(
-            key,
-            (2,),
-            minval=jnp.array([3, 3]),
-            maxval=jnp.array([self.grid_size[0], self.grid_size[1]]),
-        )
         key, sub_key = random.split(key)
 
-        return initial_state, sub_key
+        def _deterministic_reset():
+            return self.initial_state, sub_key
+
+        def _stochastic_reset():
+            stochastic_state = random.randint(
+                key,
+                (2,),
+                minval=jnp.array([3, 3]),
+                maxval=jnp.array([self.grid_size[0], self.grid_size[1]]),
+            )
+
+            return stochastic_state, sub_key
+
+        return lax.cond(
+            self.stochastic_reset,
+            _stochastic_reset,
+            _deterministic_reset,
+        )
 
     @partial(jit, static_argnums=0)
     def _reset_if_done(self, env_state, done):

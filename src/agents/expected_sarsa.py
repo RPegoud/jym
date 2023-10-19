@@ -19,25 +19,36 @@ class Expected_Sarsa(BaseAgent):
         # self.policy = Softmax_policy()
 
     @partial(jit, static_argnums=(0,))
-    def softmax_prob_distr(self, q_values, temperature):
+    def softmax_prob_distr(
+        self,
+        q_values,
+    ):
         return jnp.divide(
-            jnp.exp(q_values * temperature),
+            jnp.exp(q_values),
             jnp.sum(
-                jnp.exp(q_values * temperature),
+                jnp.exp(q_values),
             ),
         )
 
     @partial(jit, static_argnums=(0,))
-    def update(self, state, action, reward, done, next_state, q_values, temperature=1):
+    def update(
+        self,
+        state,
+        action,
+        reward,
+        done,
+        next_state,
+        q_values,
+    ):
+        next_q_values = q_values[tuple(next_state)]
         target = q_values[tuple(jnp.append(state, action))]
         target += self.learning_rate * (
             reward
             + self.discount
-            * jnp.mean(
-                q_values[tuple(next_state)]
+            * jnp.sum(
+                next_q_values
                 * self.softmax_prob_distr(
-                    q_values[tuple(next_state)],
-                    temperature,
+                    next_q_values,
                 ),
             )
             - target
