@@ -1,5 +1,7 @@
+from functools import partial
+
 import jax.numpy as jnp
-from jax import random
+from jax import jit, random, vmap
 
 from .bandits_base_env import BanditsBaseEnv
 
@@ -40,3 +42,18 @@ class K_armed_bandits(BanditsBaseEnv):
     def get_reward(self, key, action):
         key, subkey = random.split(key)
         return random.normal(subkey) + self.bandits_q[action], subkey
+
+    @partial(jit, static_argnums=(0,))
+    def get_batched_reward(self, key, action):
+        return vmap(
+            K_armed_bandits.get_reward,
+            in_axes=(None, 0, 0),
+        )(self, key, action)
+
+    @partial(jit, static_argnums=(0,))
+    def multi_run_batched_reward(self, key, action):
+        return vmap(
+            K_armed_bandits.get_batched_reward,
+            in_axes=(None, 1, -1),
+            out_axes=(1, 1),
+        )(self, key, action)

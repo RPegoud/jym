@@ -1,7 +1,7 @@
 from functools import partial
 
 import jax.numpy as jnp
-from jax import jit, lax, random
+from jax import jit, lax, random, vmap
 
 from .base_policy import BasePolicy
 
@@ -11,11 +11,9 @@ class BanditEpsilonGreedy(BasePolicy):
     Epsilon-Greedy policy with random tie-breaks
     """
 
-    def __init__(self, epsilon):
-        self.epsilon = epsilon
-
-    @partial(jit, static_argnums=(0, 2))
-    def call(self, key, n_actions, q_values):
+    @staticmethod
+    @partial(jit, static_argnums=(1, 3))
+    def call(key, n_actions, q_values, epsilon):
         def _random_action_fn(subkey):
             return random.choice(subkey, jnp.arange(n_actions))
 
@@ -30,7 +28,7 @@ class BanditEpsilonGreedy(BasePolicy):
             choice = random.choice(subkey, jnp.arange(n_actions), p=p)
             return jnp.int32(choice)
 
-        explore = random.uniform(key) < self.epsilon
+        explore = random.uniform(key) < epsilon
         key, subkey = random.split(key)
         action = lax.cond(
             explore,
@@ -40,3 +38,21 @@ class BanditEpsilonGreedy(BasePolicy):
         )
 
         return action, subkey
+
+    @staticmethod
+    @partial(jit, static_argnums=(1))
+    def batched_call(key, n_actions, q_values, epsilon):
+        return vmap(
+            BanditEpsilonGreedy.call,
+            in_axes=(0, None, -1, 0),
+        )(key, n_actions, q_values, epsilon)
+
+    @staticmethod
+    @partial(jit, static_argnums=(1))
+    def multi_run_batched_call(keys, n_actions, q_values, epsilons):
+        # Vmap over both the number of runs and the batch dimension
+        return vmap(
+            BanditEpsilonGreedy.batched_call,
+            in_axes=(1, None, -1, None),
+            out_axes=(-1, 1),
+        )(keys, n_actions, q_values, epsilons)

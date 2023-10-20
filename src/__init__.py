@@ -7,4 +7,11 @@ from .tabular import (
     GridWorld,
     Q_learning,
     Softmax_policy,
+    animated_heatmap,
+    double_rollout,
+    parallel_rollout,
+    plot_path,
+    rollout,
+    tabular_double_training_loops,
+    tabular_training_loops,
 )
