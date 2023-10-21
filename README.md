@@ -47,16 +47,26 @@ This repository contains JAX implementations of several RL algorithms and enviro
 
   Reproduction of the 10-armed Testbed experiment presented in [***Reinforcement Learning: An Introduction***](http://incompleteideas.net/book/the-book-2nd.html) (chapter 2.3, page 28-29).
 
-<div>
-    <a href="https://plotly.com/~Ryan_pgd/7/?share_key=XO3yJyF8asLycAUymU4pbS" target="_blank" title="K-armed Bandits Testbed distribution" style="display: block; text-align: center;"><img src="https://plotly.com/~Ryan_pgd/7.png?share_key=XO3yJyF8asLycAUymU4pbS" alt="K-armed Bandits Testbed distribution" style="max-width: 100%;width: 600px;"  width="600" onerror="this.onerror=null;this.src='https://plotly.com/404.png';" /></a>
-    <script data-plotly="Ryan_pgd:7" sharekey-plotly="XO3yJyF8asLycAUymU4pbS" src="https://plotly.com/embed.js" async></script>
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <img src="https://raw.githubusercontent.com/RPegoud/jax_rl/main/images/10-armed%20bandits%20testbed.png" alt="Description for first image" width="400"/>
+        <p align="center">10-armed Testebed environment</p>
+      </td>
+      <td>
+        <a href="https://plotly.com/~Ryan_pgd/7/?share_key=XO3yJyF8asLycAUymU4pbS" target="_blank" title="K-armed Bandits Testbed distribution"><img src="https://plotly.com/~Ryan_pgd/7.png?share_key=XO3yJyF8asLycAUymU4pbS" alt="K-armed Bandits Testbed distribution" width="370"/></a>
+        <p align="center">K-armed Bandits JAX environment</p>
+      </td>
+    </tr>
+  </table>
 </div>
 
 <div align="center">
 <table>
   <tr>
     <td>
-      <img src="https://miro.medium.com/v2/resize:fit:1400/1*n5up95W-Zy5gC0Momy7LaQ.png" alt="Description for first image" width="500"/>
+      <img src="https://miro.medium.com/v2/resize:fit:1400/1*n5up95W-Zy5gC0Momy7LaQ.png" alt="Description for first image" width="430"/>
       <p align="center">Results obtained in Reinforcement Learning: An Introduction</p>
     </td>
     <td>
