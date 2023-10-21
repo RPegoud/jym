@@ -41,13 +41,31 @@ This repository contains JAX implementations of several RL algorithms and enviro
   * Frozen Lake
   * CartPole
 
-<!-- ## 🚀 ***Performances***
+## 🚀 ***Experiments***
 
-| Algorithm  | Type        | Environment | Updates per step | Steps/second (single CPU) | Number of parallel agents | Number of training steps | Runtime (s) |
-|:---------- | ----------- |:----------- | ---------------- |:------------------------- | ------------------------- | ------------------------ | ----------- |
-| Q-learning | Model-free  | GridWorld   | 1                | 1.500.000                 | 30                        | 100.000                  | 2           |
-| Dyna-Q     | Model-based |             |                  | *coming soon*             |                           |                          |             |
-| Dyna-Q+    | Model-based |             |                  | *coming soon*             |                           |                          |             | -->
+* ### **K-armed Bandits Testbed**
+
+  Reproduction of the 10-armed Testbed experiment presented in [***Reinforcement Learning: An Introduction***](http://incompleteideas.net/book/the-book-2nd.html) (chapter 2.3, page 28-29).
+
+<div>
+    <a href="https://plotly.com/~Ryan_pgd/7/?share_key=XO3yJyF8asLycAUymU4pbS" target="_blank" title="K-armed Bandits Testbed distribution" style="display: block; text-align: center;"><img src="https://plotly.com/~Ryan_pgd/7.png?share_key=XO3yJyF8asLycAUymU4pbS" alt="K-armed Bandits Testbed distribution" style="max-width: 100%;width: 600px;"  width="600" onerror="this.onerror=null;this.src='https://plotly.com/404.png';" /></a>
+    <script data-plotly="Ryan_pgd:7" sharekey-plotly="XO3yJyF8asLycAUymU4pbS" src="https://plotly.com/embed.js" async></script>
+</div>
+
+<div align="center">
+<table>
+  <tr>
+    <td>
+      <img src="https://miro.medium.com/v2/resize:fit:1400/1*n5up95W-Zy5gC0Momy7LaQ.png" alt="Description for first image" width="500"/>
+      <p align="center">Results obtained in Reinforcement Learning: An Introduction</p>
+    </td>
+    <td>
+      <a href="https://plotly.com/~Ryan_pgd/3/?share_key=lsDsi9i0jpxi7BoFVD9EKU" target="_blank" title="K-armed Bandits Testbed"><img src="https://plotly.com/~Ryan_pgd/3.png?share_key=lsDsi9i0jpxi7BoFVD9EKU" alt="K-armed Bandits Testbed" width="400"/></a>
+    <p align="center">Replicated results using the K-armed Bandits JAX environment</p>
+    </td>
+  </tr>
+</table>
+</div>
 
 ## 💾 Installation
 
