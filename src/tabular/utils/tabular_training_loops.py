@@ -3,7 +3,7 @@ from jax import jit, lax, random
 from jax_tqdm import loop_tqdm
 
 
-def rollout(
+def tabular_rollout(
     key,
     TIME_STEPS,
     N_ACTIONS,

@@ -6,7 +6,7 @@ from .utils import (
     double_rollout,
     parallel_rollout,
     plot_path,
-    rollout,
     tabular_double_training_loops,
+    tabular_rollout,
     tabular_training_loops,
 )
