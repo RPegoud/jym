@@ -1,5 +1,3 @@
-from functools import partial
-
 import jax.numpy as jnp
 from jax import jit, random, vmap
 
@@ -12,7 +10,7 @@ class K_armed_bandits(BanditsBaseEnv):
         self.K = K
         self.actions = jnp.arange(K)
         self.init_key = random.PRNGKey(SEED)
-        self.bandits_q = random.normal(self.init_key, shape=(K,))
+        # self.bandits_q = random.normal(self.init_key, shape=(K,))
 
     def render(self):
         """
@@ -39,21 +37,25 @@ class K_armed_bandits(BanditsBaseEnv):
     def __repr__(self) -> str:
         return str(self.__dict__)
 
-    def get_reward(self, key, action):
+    @staticmethod
+    @jit
+    def get_reward(key, action, bandits_q):
         key, subkey = random.split(key)
-        return random.normal(subkey) + self.bandits_q[action], subkey
+        return random.normal(subkey) + bandits_q[action], subkey
 
-    @partial(jit, static_argnums=(0,))
-    def get_batched_reward(self, key, action):
+    @staticmethod
+    @jit
+    def get_batched_reward(key, action, bandits_q):
         return vmap(
             K_armed_bandits.get_reward,
-            in_axes=(None, 0, 0),
-        )(self, key, action)
+            in_axes=(0, 0, None),
+        )(key, action, bandits_q)
 
-    @partial(jit, static_argnums=(0,))
-    def multi_run_batched_reward(self, key, action):
+    @staticmethod
+    @jit
+    def multi_run_batched_reward(key, action, bandits_q):
         return vmap(
             K_armed_bandits.get_batched_reward,
-            in_axes=(None, 1, -1),
+            in_axes=(1, -1, 1),
             out_axes=(1, 1),
-        )(self, key, action)
+        )(key, action, bandits_q)
