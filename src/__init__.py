@@ -16,9 +16,9 @@ from .tabular import (
     Softmax_policy,
     animated_heatmap,
     double_rollout,
-    parallel_rollout,
     plot_path,
     tabular_double_training_loops,
+    tabular_parallel_rollout,
     tabular_rollout,
     tabular_training_loops,
 )

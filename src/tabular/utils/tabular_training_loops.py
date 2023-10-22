@@ -62,8 +62,15 @@ def tabular_rollout(
     return single_agent_rollout(key, TIME_STEPS)
 
 
-def parallel_rollout(
-    keys, TIME_STEPS, N_ACTIONS, GRID_SIZE, N_ENV, v_policy, v_update, v_step, v_reset
+def tabular_parallel_rollout(
+    keys,
+    TIME_STEPS,
+    N_ACTIONS,
+    GRID_SIZE,
+    N_ENV,
+    env,
+    agent,
+    policy,
 ):
     def parallel_agent_rollout(keys, timesteps, n_env):
         @loop_tqdm(TIME_STEPS)
@@ -72,10 +79,12 @@ def parallel_rollout(
             env_states, action_keys, all_obs, all_rewards, all_done, all_q_values = val
             states, _ = env_states
             q_values = all_q_values[i]
-            actions, action_keys = v_policy(action_keys, N_ACTIONS, states, q_values)
+            actions, action_keys = policy.batch_call(
+                action_keys, N_ACTIONS, states, q_values
+            )
 
-            env_states, obs, rewards, done = v_step(env_states, actions)
-            q_values = v_update(states, actions, rewards, done, obs, q_values)
+            env_states, obs, rewards, done = env.batch_step(env_states, actions)
+            q_values = agent.batch_update(states, actions, rewards, done, obs, q_values)
 
             all_obs = all_obs.at[i].set(obs)
             all_rewards = all_rewards.at[i].set(rewards)
@@ -102,7 +111,7 @@ def parallel_rollout(
         )
 
         action_keys = random.split(random.PRNGKey(0), n_env)
-        env_states, _ = v_reset(keys)
+        env_states, _ = env.batch_reset(keys)
 
         val_init = (
             env_states,

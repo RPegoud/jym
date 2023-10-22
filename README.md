@@ -48,9 +48,7 @@ This repository contains JAX implementations of several RL algorithms and enviro
 <a href="https://github.com/RPegoud/jax_rl/blob/main/notebooks/bandits/incremental_bandits.ipynb">
  <img src="https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white">
 </a>
-
   Reproduction of the 10-armed Testbed experiment presented in [***Reinforcement Learning: An Introduction***](http://incompleteideas.net/book/the-book-2nd.html) (chapter 2.3, page 28-29).
-
 <div align="center">
   <table>
     <tr>
@@ -64,6 +62,7 @@ This repository contains JAX implementations of several RL algorithms and enviro
       </td>
     </tr>
   </table>
+
 </div>
 
 <div align="center">

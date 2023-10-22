@@ -17,7 +17,7 @@ class Double_Q_learning(BaseAgent):
 
         self.learning_rate = learning_rate
 
-    @partial(jit, static_argnums=(0,))
+    @partial(jit, static_argnums=(0))
     def update(self, state, action, reward, done, next_state, q1, q2, to_update: bool):
         @partial(jit, static_argnums=(0,))
         def update_q1():
@@ -45,6 +45,3 @@ class Double_Q_learning(BaseAgent):
             update_q1,
             update_q2,
         )
-
-    def act(self):
-        pass

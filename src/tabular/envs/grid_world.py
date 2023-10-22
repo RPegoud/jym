@@ -2,7 +2,7 @@ from functools import partial
 
 import jax.numpy as jnp
 import jax.random as random
-from jax import jit, lax
+from jax import jit, lax, vmap
 
 from .tabular_base_env import TabularBaseEnv
 
@@ -94,3 +94,21 @@ class GridWorld(TabularBaseEnv):
         env_state = self._reset(key)
         new_state = env_state[0]
         return env_state, self._get_obs(new_state)
+
+    @partial(jit, static_argnums=(0))
+    def batch_step(self, env_sate, action):
+        return vmap(
+            GridWorld.step,
+            in_axes=(None, (0, 0), 0),  # ((env_state), action)
+            out_axes=((0, 0), 0, 0, 0),  # ((env_state), obs, reward, done)
+            axis_name="batch_axis",
+        )(self, env_sate, action)
+
+    @partial(jit, static_argnums=(0))
+    def batch_reset(self, key):
+        return vmap(
+            GridWorld.reset,
+            in_axes=(None, 0),
+            out_axes=((0, 0), 0),  # ((env_state), obs)
+            axis_name="batch_axis",
+        )(self, key)

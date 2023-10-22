@@ -19,7 +19,3 @@ class BaseAgent(ABC):
     @abstractmethod
     def update(self):
         pass
-
-    @abstractmethod
-    def act(self):
-        pass
