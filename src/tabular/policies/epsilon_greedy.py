@@ -1,7 +1,7 @@
 from functools import partial
 
 import jax.numpy as jnp
-from jax import jit, lax, random
+from jax import jit, lax, random, vmap
 
 from .base_policy import BasePolicy
 
@@ -41,3 +41,11 @@ class EpsilonGreedy(BasePolicy):
         )
 
         return action, subkey
+
+    @partial(jit, static_argnums=(0, 2))
+    def batch_call(self, key, n_actions, state, q_values):
+        return vmap(
+            EpsilonGreedy.call,
+            in_axes=(None, 0, None, 0, -1),  # (keys, n_actions, state, q_values)
+            axis_name="batch_axis",
+        )(self, key, n_actions, state, q_values)
