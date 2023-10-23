@@ -26,6 +26,7 @@ optax = "^0.1.7"
 nbformat = "^5.9.2"
 pytest = "^7.4.2"
 jax-tqdm = "^0.1.1"
+python-dotenv = "^1.0.0"
 
 [tool.ruff]
 extend-ignore = ["E501"]

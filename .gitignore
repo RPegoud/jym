@@ -1,1 +1,2 @@
-chart_studio.py
+upload_chart.py
+*.env

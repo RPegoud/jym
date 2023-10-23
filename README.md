@@ -48,7 +48,9 @@ This repository contains JAX implementations of several RL algorithms and enviro
 <a href="https://github.com/RPegoud/jax_rl/blob/main/notebooks/bandits/incremental_bandits.ipynb">
  <img src="https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white">
 </a>
+
   Reproduction of the 10-armed Testbed experiment presented in [***Reinforcement Learning: An Introduction***](http://incompleteideas.net/book/the-book-2nd.html) (chapter 2.3, page 28-29).
+  
 <div align="center">
   <table>
     <tr>
@@ -73,7 +75,7 @@ This repository contains JAX implementations of several RL algorithms and enviro
       <p align="center">Results obtained in Reinforcement Learning: An Introduction</p>
     </td>
     <td>
-      <a href="https://plotly.com/~Ryan_pgd/3/?share_key=lsDsi9i0jpxi7BoFVD9EKU" target="_blank" title="K-armed Bandits Testbed"><img src="https://plotly.com/~Ryan_pgd/3.png?share_key=lsDsi9i0jpxi7BoFVD9EKU" alt="K-armed Bandits Testbed" width="400"/></a>
+      <a href="https://plotly.com/~Ryan_pgd/9/?share_key=B9eEph84sA0EoX3XL7eFhs" target="_blank" title="10-Armed bandits testbed reproduction"><img src="https://plotly.com/~Ryan_pgd/9.png?share_key=B9eEph84sA0EoX3XL7eFhs" alt="K-armed Bandits Testbed" width="400"/></a>
     <p align="center">Replicated results using the K-armed Bandits JAX environment</p>
     </td>
   </tr>
