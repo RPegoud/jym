@@ -7,6 +7,7 @@ from .bandits import (
     bandits_rollout,
 )
 from .tabular import (
+    CliffWalking,
     Double_Q_learning,
     DoubleEpsilonGreedy,
     EpsilonGreedy,

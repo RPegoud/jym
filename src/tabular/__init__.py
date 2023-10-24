@@ -1,5 +1,5 @@
 from .agents import Double_Q_learning, Expected_Sarsa, Q_learning
-from .envs import GridWorld
+from .envs import CliffWalking, GridWorld
 from .policies import DoubleEpsilonGreedy, EpsilonGreedy, Softmax_policy
 from .utils import (
     animated_heatmap,
