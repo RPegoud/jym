@@ -65,8 +65,8 @@ def animated_heatmap(
         yaxis_title="Y Coordinate",
         height=600,
         width=800,
-        xaxis=dict(range=[0, dims[1]]),  # Set the range for x-axis based on grid_y
-        yaxis=dict(range=[dims[0], 0], autorange=False),
+        xaxis=dict(range=[0, dims[1]], autorange=True),
+        yaxis=dict(range=[dims[0], 0], autorange=True),
     )
 
     # Decrease the duration for faster transitions (in milliseconds)
