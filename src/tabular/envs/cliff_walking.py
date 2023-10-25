@@ -32,10 +32,17 @@ class CliffWalking(GridWorld):
             .set(0)
         )
 
+        self.terminal_states = (
+            (jnp.zeros(self.grid_size, dtype=jnp.bool_))
+            .at[-1, 1:-1]
+            .set(1)
+            .at[tuple(self.goal_state)]
+            .set(1)
+        )
+
     @partial(jit, static_argnums=0)
     def _get_reward_done(self, new_state):
-        reward = self.reward_map[tuple(new_state)]
-        # done = jnp.equal(reward, -100) & jnp.all(new_state == self.goal_state)
-        done = jnp.bool_(new_state[0] == 3 & new_state[1] >= 1)
-
+        new_state = tuple(new_state)
+        reward = self.reward_map[new_state]
+        done = self.terminal_states[new_state]
         return reward, done
