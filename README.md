@@ -1,6 +1,8 @@
-# **JAX-RL** <img src='https://upload.wikimedia.org/wikipedia/commons/8/86/Google_JAX_logo.svg' alt="Environment" width="50" />
+# **JYM** <img src='https://upload.wikimedia.org/wikipedia/commons/8/86/Google_JAX_logo.svg' alt="Environment" width="50" />
 
-This repository contains JAX implementations of several RL algorithms and environments.
+![image](https://github.com/RPegoud/jym/assets/60786847/cbde5ac2-6af3-40f7-9f27-9a2fa4dc1003)
+
+Welcome to the JAX Gym (JYM for short), this repository contains JAX implementations of standard RL algorithms and vectorized environments.
 
 ## 🌟 ***Key Features***
 
