@@ -1,8 +1,15 @@
 # **JYM** <img src='https://upload.wikimedia.org/wikipedia/commons/8/86/Google_JAX_logo.svg' alt="Environment" width="50" />
 
-![image](https://github.com/RPegoud/jym/assets/60786847/cbde5ac2-6af3-40f7-9f27-9a2fa4dc1003)
+![image](https://github.com/RPegoud/jym/assets/60786847/f7939998-dacc-4ca5-acf2-56a0dc018377)
 
 Welcome to the JAX Gym (JYM for short), this repository contains JAX implementations of standard RL algorithms and vectorized environments.
+
+<h3 align="left">🚀 Stack:</h3>
+<p align="left">
+ <a href="" target="blank"><img align="center" src="https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/267_Python_logo-512.png" alt="" height="80" width="80" /></a>
+ <a href="" target="blank"><img align="center" src="https://upload.wikimedia.org/wikipedia/commons/8/86/Google_JAX_logo.svg" alt="" height="80" width="80" /></a>
+</p>
+
 
 ## 🌟 ***Key Features*** 
 
@@ -43,7 +50,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
   * Frozen Lake
   * CartPole
 
-## 🚀 ***Experiments***
+## 🧪 ***Experiments***
 
 * ### **K-armed Bandits Testbed**
 
