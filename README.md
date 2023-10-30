@@ -4,7 +4,7 @@
 
 Welcome to the JAX Gym (JYM for short), this repository contains JAX implementations of standard RL algorithms and vectorized environments.
 
-## 🌟 ***Key Features***
+## 🌟 ***Key Features*** 
 
 * 🐍  **Clean** and **beginner-friendly** implementation of **Reinforcement Learning algorithms** in **JAX**
 * ⚡ **Vectorized environments** for lightning-fast training
