@@ -81,7 +81,9 @@ class GridWorld(TabularBaseEnv):
     def step(self, env_state, action):
         state, key = env_state
         action = self.movements[action]
-        new_state = jnp.clip(jnp.add(state, action), jnp.array([0, 0]), self.grid_size)
+        new_state = jnp.clip(
+            jnp.add(state, action), jnp.array([0, 0]), self.grid_size - 1
+        )
         reward, done = self._get_reward_done(new_state)
 
         env_state = new_state, key

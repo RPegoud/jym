@@ -35,6 +35,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * Casino *(fancy name for K-armed Bandits)*
   * Tabular
     * GridWorld
+    * Cliff Walking
 
 ## ⌛ ***Coming Soon***
 
@@ -46,7 +47,6 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
   * Deep RL:
     * Deep Q Network (DQN)
 * 🌍 Environments:
-  * Cliff Walking
   * Frozen Lake
   * CartPole
 

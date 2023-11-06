@@ -31,7 +31,7 @@ class Q_learning(BaseAgent):
             Q_learning.update,
             #  self, state, action, reward, done, next_state, q_values
             in_axes=(None, 0, 0, 0, 0, 0, -1),
-            # return the batch dimensio as last dimension of the output
+            # return the batch dimension as last dimension of the output
             out_axes=-1,
             axis_name="batch_axis",
         )(self, state, action, reward, done, next_state, q_values)

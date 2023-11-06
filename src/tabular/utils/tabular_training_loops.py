@@ -12,10 +12,10 @@ def tabular_rollout(
     agent,
     policy,
 ):
-    def single_agent_rollout(key: random.PRNGKey, timesteps=TIME_STEPS):
+    def _single_agent_rollout(key: random.PRNGKey, timesteps=TIME_STEPS):
         @loop_tqdm(TIME_STEPS)
         @jit
-        def fori_body(i: int, val: tuple):
+        def _fori_body(i: int, val: tuple):
             env_states, action_key, all_obs, all_rewards, all_done, all_q_values = val
             states, _ = env_states
             q_values = all_q_values[i]
@@ -55,11 +55,11 @@ def tabular_rollout(
             all_done,
             all_q_values,
         )
-        val = lax.fori_loop(0, timesteps, fori_body, val_init)
+        val = lax.fori_loop(0, timesteps, _fori_body, val_init)
 
         return val
 
-    return single_agent_rollout(key, TIME_STEPS)
+    return _single_agent_rollout(key, TIME_STEPS)
 
 
 def tabular_parallel_rollout(
@@ -72,10 +72,10 @@ def tabular_parallel_rollout(
     agent,
     policy,
 ):
-    def parallel_agent_rollout(keys, timesteps, n_env):
+    def _parallel_agent_rollout(keys, timesteps, n_env):
         @loop_tqdm(TIME_STEPS)
         @jit
-        def fori_body(i: int, val: tuple):
+        def _fori_body(i: int, val: tuple):
             env_states, action_keys, all_obs, all_rewards, all_done, all_q_values = val
             states, _ = env_states
             q_values = all_q_values[i]
@@ -121,9 +121,9 @@ def tabular_parallel_rollout(
             all_done,
             all_q_values,
         )
-        val = lax.fori_loop(0, timesteps, fori_body, val_init)
+        val = lax.fori_loop(0, timesteps, _fori_body, val_init)
         env_states, action_keys, all_obs, all_reward, all_done, all_q_values = val
 
         return all_obs, all_reward, all_done, all_q_values
 
-    return parallel_agent_rollout(keys, TIME_STEPS, N_ENV)
+    return _parallel_agent_rollout(keys, TIME_STEPS, N_ENV)
