@@ -1,4 +1,4 @@
-# **JYM**
+# **JYM (Jax Gym)**
 
 ![image](https://github.com/RPegoud/jym/assets/60786847/f7939998-dacc-4ca5-acf2-56a0dc018377)
 
