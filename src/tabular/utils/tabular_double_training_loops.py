@@ -12,10 +12,10 @@ def double_rollout(
     agent,
     policy,
 ):
-    def single_agent_double_rollout(key: random.PRNGKey, timesteps=TIME_STEPS):
+    def _single_agent_double_rollout(key: random.PRNGKey, timesteps=TIME_STEPS):
         @loop_tqdm(TIME_STEPS)
         @jit
-        def fori_body(i: int, val: tuple):
+        def _fori_body(i: int, val: tuple):
             env_states, action_key, all_obs, all_rewards, all_done, all_q1, all_q2 = val
             states, _ = env_states
             q1 = all_q1[i]
@@ -73,8 +73,8 @@ def double_rollout(
             all_q1,
             all_q2,
         )
-        val = lax.fori_loop(0, timesteps, fori_body, val_init)
+        val = lax.fori_loop(0, timesteps, _fori_body, val_init)
 
         return val
 
-    return single_agent_double_rollout(key, TIME_STEPS)
+    return _single_agent_double_rollout(key, TIME_STEPS)

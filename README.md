@@ -26,6 +26,7 @@ This repository contains JAX implementations of several RL algorithms and enviro
     * Casino *(fancy name for K-armed Bandits)*
   * Tabular
     * GridWorld
+    * Cliff Walking
 
 ## ⌛ ***Coming Soon***
 
@@ -37,7 +38,6 @@ This repository contains JAX implementations of several RL algorithms and enviro
   * Deep RL:
     * Deep Q Network (DQN)
 * 🌍 Environments:
-  * Cliff Walking
   * Frozen Lake
   * CartPole
 

@@ -16,7 +16,6 @@ class Expected_Sarsa(BaseAgent):
         )
 
         self.learning_rate = learning_rate
-        # self.policy = Softmax_policy()
 
     @partial(jit, static_argnums=(0,))
     def softmax_prob_distr(
@@ -48,7 +47,7 @@ class Expected_Sarsa(BaseAgent):
             Expected_Sarsa.update,
             #  self, state, action, reward, done, next_state, q_values
             in_axes=(None, 0, 0, 0, 0, 0, -1),
-            # return the batch dimensio as last dimension of the output
+            # return the batch dimension as last dimension of the output
             out_axes=-1,
             axis_name="batch_axis",
         )(self, state, action, reward, done, next_state, q_values)
