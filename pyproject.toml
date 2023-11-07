@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "jax-rl"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.13"
 pandas = "^2.1.0"
 numpy = "^1.25.2"
 matplotlib = "^3.7.2"
@@ -27,6 +27,7 @@ nbformat = "^5.9.2"
 pytest = "^7.4.2"
 jax-tqdm = "^0.1.1"
 python-dotenv = "^1.0.0"
+flax = "^0.7.5"
 
 [tool.ruff]
 extend-ignore = ["E501"]
