@@ -27,6 +27,7 @@ class CartPole(ControlBaseEnv):
         return str(self.__dict__)
 
     def _get_obs(self, state):
+        # the state is fully observable
         return state
 
     @partial(jit, static_argnums=0)
@@ -48,11 +49,8 @@ class CartPole(ControlBaseEnv):
             done,
             self._reset,
             lambda key: env_state,
-            key,
+            operand=key,
         )
-
-    def _get_reward_done(self):
-        pass
 
     @partial(jit, static_argnums=(0))
     def step(self, env_state, action):

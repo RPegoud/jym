@@ -7,15 +7,11 @@ from .base_agent import BaseAgent
 
 
 class Expected_Sarsa(BaseAgent):
-    def __init__(self, key, n_states, n_actions, discount, learning_rate) -> None:
+    def __init__(self, discount, learning_rate) -> None:
         super(Expected_Sarsa, self).__init__(
-            key,
-            n_states,
-            n_actions,
             discount,
+            learning_rate,
         )
-
-        self.learning_rate = learning_rate
 
     @partial(jit, static_argnums=(0,))
     def softmax_prob_distr(

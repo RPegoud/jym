@@ -7,15 +7,11 @@ from .base_agent import BaseAgent
 
 
 class Double_Q_learning(BaseAgent):
-    def __init__(self, key, n_states, n_actions, discount, learning_rate) -> None:
+    def __init__(self, discount, learning_rate) -> None:
         super(Double_Q_learning, self).__init__(
-            key,
-            n_states,
-            n_actions,
             discount,
+            learning_rate,
         )
-
-        self.learning_rate = learning_rate
 
     @partial(jit, static_argnums=(0))
     def update(self, state, action, reward, done, next_state, q1, q2, to_update: bool):
