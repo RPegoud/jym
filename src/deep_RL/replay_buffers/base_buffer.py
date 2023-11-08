@@ -1,37 +1,32 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from functools import partial
 
-import jax.numpy as jnp
-from jax import lax
-
-
-@dataclass
-class Experience:
-    state: jnp.ndarray
-    action: int
-    reward: float
-    next_state: jnp.ndarray
-    done: bool
+from jax import jit
 
 
 class BaseReplayBuffer(ABC):
     def __init__(
         self,
-        size: int,
+        buffer_size: int,
+        batch_size: int,
     ) -> None:
-        self.size = size
-        self.buffer = {}
-        self.idx = 0
+        self.buffer_size = buffer_size
+        self.batch_size = batch_size
 
-    def add(self, experience: Experience):
-        self.buffer[self.idx] = experience
+    @partial(jit, static_argnums=(0))
+    def add(self, buffer: dict, experience: tuple, idx: int):
+        state, action, reward, next_state, done = experience
+
+        buffer["states"] = buffer["states"].at[idx].set(state)
+        buffer["actions"] = buffer["actions"].at[idx].set(action)
+        buffer["rewards"] = buffer["rewards"].at[idx].set(reward)
+        buffer["next_states"] = buffer["next_states"].at[idx].set(next_state)
+        buffer["dones"] = buffer["dones"].at[idx].set(done)
+
         # conditionally reset the index
-        self.idx = lax.cond(
-            self.idx < self.size - 1,
-            lambda _: self.idx + 1,
-            lambda _: 0,
-            operand=None,
-        ).item()
+        idx = (idx + 1) % self.buffer_size
+
+        return buffer, idx
 
     @abstractmethod
     def sample(self):

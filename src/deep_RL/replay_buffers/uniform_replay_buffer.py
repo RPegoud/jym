@@ -1,20 +1,40 @@
-import jax.numpy as jnp
-from jax import random
+from functools import partial
 
-from .base_buffer import BaseReplayBuffer, Experience
+import jax.numpy as jnp
+from jax import jit, random, tree_map, vmap
+
+from .base_buffer import BaseReplayBuffer
 
 
 class UniformReplayBuffer(BaseReplayBuffer):
-    def __init__(self, size: int) -> None:
-        super(UniformReplayBuffer, self).__init__(size)
+    def __init__(
+        self,
+        buffer_size: int,
+        batch_size: int,
+    ) -> None:
+        super(UniformReplayBuffer, self).__init__(buffer_size, batch_size)
 
-    def sample(self, key: random.PRNGKey) -> Experience:
+    @partial(
+        jit,
+        static_argnums=(0),
+    )
+    def sample(
+        self,
+        key: random.PRNGKey,
+        buffer: dict,
+    ):
         """
         Samples a random experience from the replay buffer using
         the uniform distribution.
         """
-        key, subkey = random.split(key)
-        choices = jnp.array(list(self.buffer.keys()))
-        random_idx = random.choice(subkey, choices)
 
-        return self.buffer[random_idx.item()]
+        @partial(vmap, in_axes=(0, None))
+        def sample_batch(indexes, buffer):
+            return tree_map(lambda x: x[indexes], buffer)
+
+        key, subkey = random.split(key)
+        indexes = random.choice(
+            subkey, jnp.arange(self.batch_size), shape=(self.batch_size,)
+        )
+        samples = sample_batch(indexes, buffer)
+        return [exp for exp in zip(*samples.values())]
