@@ -14,7 +14,13 @@ class BaseReplayBuffer(ABC):
         self.batch_size = batch_size
 
     @partial(jit, static_argnums=(0))
-    def add(self, buffer: dict, experience: tuple, idx: int):
+    def add(
+        self,
+        buffer: dict,
+        experience: tuple,
+        idx: int,
+        n_experiences: int,
+    ):
         state, action, reward, next_state, done = experience
 
         buffer["states"] = buffer["states"].at[idx].set(state)
@@ -26,7 +32,7 @@ class BaseReplayBuffer(ABC):
         # conditionally reset the index
         idx = (idx + 1) % self.buffer_size
 
-        return buffer, idx
+        return buffer, idx, n_experiences + 1
 
     @abstractmethod
     def sample(self):
