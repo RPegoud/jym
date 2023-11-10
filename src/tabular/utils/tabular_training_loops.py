@@ -16,14 +16,14 @@ def tabular_rollout(
         @loop_tqdm(TIME_STEPS)
         @jit
         def _fori_body(i: int, val: tuple):
-            env_states, action_key, all_obs, all_rewards, all_done, all_q_values = val
-            states, _ = env_states
+            env_state, action_key, all_obs, all_rewards, all_done, all_q_values = val
+            state, _ = env_state
             q_values = all_q_values[i]
 
             # action selection, step and q-update
-            actions, action_key = policy(action_key, N_ACTIONS, states, q_values)
-            env_states, obs, rewards, done = env.step(env_states, actions)
-            q_values = agent.update(states, actions, rewards, done, obs, q_values)
+            actions, action_key = policy(action_key, N_ACTIONS, state, q_values)
+            env_state, obs, rewards, done = env.step(env_state, actions)
+            q_values = agent.update(state, actions, rewards, done, obs, q_values)
 
             # update observations, rewards, done flag and q_values
             all_obs = all_obs.at[i].set(obs)
@@ -31,7 +31,7 @@ def tabular_rollout(
             all_done = all_done.at[i].set(done)
             all_q_values = all_q_values.at[i + 1].set(q_values)
 
-            val = (env_states, action_key, all_obs, all_rewards, all_done, all_q_values)
+            val = (env_state, action_key, all_obs, all_rewards, all_done, all_q_values)
             return val
 
         # initialize obs, rewards, done and q_values with an added time index

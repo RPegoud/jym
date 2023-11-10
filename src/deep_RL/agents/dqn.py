@@ -23,45 +23,12 @@ class DQN(BaseDeepRLAgent):
         self.model = model
         self.epsilon = epsilon
 
-    # def update(
-    #     self,
-    #     x: jnp.ndarray,
-    #     y: jnp.ndarray,
-    #     model_params: dict,
-    #     target_net_params: dict,
-    #     optimizer: optax.GradientTransformation,
-    #     optimizer_state: jnp.ndarray,
-    #     loss_fn: Callable,
-    #     n_updates: int,
-    #     target_updates: int,
-    # ):
-    #     @loop_tqdm(n_updates)
-    #     @jit
-    #     def _update_loop(i: int, val: tuple):
-    #         x, y, model_params, target_net_params, optimizer_state, losses = val
-    #         loss_val, grads = loss_grad_fn(model_params, x, y)
-    #         updates, optimizer_state = optimizer(grads, optimizer_state)
-    #         model_params = optax.apply_updates(model_params, updates)
-    #         losses = losses.at[i].set(loss_val)
-
-    #         # update the target parameters every `target_updates` steps
-    #         target_net_params = lax.cond(
-    #             i % target_updates == 0,
-    #             lambda _: model_params,
-    #             lambda _: target_net_params,
-    #             operand=None,
-    #         )
-    #         return (x, y, model_params, target_net_params, optimizer_state, losses)
-
-    #     losses = jnp.empty((n_updates), dtype=jnp.float32)
-
-    #     loss_grad_fn = value_and_grad(loss_fn)
-    #     val_init = (x, y, model_params, target_net_params, optimizer_state, losses)
-
-    #     return lax.fori_loop(0, n_updates, _update_loop, val_init)
-
     @partial(jit, static_argnums=(0))
     def act(self, key: random.PRNGKey, model_params: dict, state: jnp.ndarray):
+        """
+        Epsilon-Greedy policy with respect to the estimated Q-values.
+        """
+
         def _random_action(subkey):
             return random.choice(subkey, jnp.arange(state.shape[-1]))
 
@@ -90,14 +57,15 @@ class DQN(BaseDeepRLAgent):
     ):
         @jit
         def batch_loss_fn(
-            model_params,
-            target_net_params,
-            states,
-            actions,
-            next_states,
-            dones,
-            rewards,
+            model_params: dict,
+            target_net_params: dict,
+            states: jnp.ndarray,
+            actions: jnp.ndarray,
+            next_states: jnp.ndarray,
+            dones: jnp.ndarray,
+            rewards: jnp.ndarray,
         ):
+            # vectorize the loss over states, actions, next_states, done flags and rewards
             @partial(vmap, in_axes=(None, None, 0, 0, 0, 0, 0))
             def _loss_fn(
                 model_params, target_net_params, state, action, next_state, done, reward

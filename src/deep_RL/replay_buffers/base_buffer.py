@@ -19,9 +19,9 @@ class BaseReplayBuffer(ABC):
         buffer: dict,
         experience: tuple,
         idx: int,
-        n_experiences: int,
     ):
         state, action, reward, next_state, done = experience
+        idx = idx % self.buffer_size
 
         buffer["states"] = buffer["states"].at[idx].set(state)
         buffer["actions"] = buffer["actions"].at[idx].set(action)
@@ -30,9 +30,9 @@ class BaseReplayBuffer(ABC):
         buffer["dones"] = buffer["dones"].at[idx].set(done)
 
         # conditionally reset the index
-        idx = (idx + 1) % self.buffer_size
+        # idx = (idx + 1) % self.buffer_size
 
-        return buffer, idx, n_experiences + 1
+        return buffer
 
     @abstractmethod
     def sample(self):
