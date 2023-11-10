@@ -4,7 +4,7 @@ from typing import Callable
 import haiku as hk
 import jax.numpy as jnp
 import optax
-from jax import jit, lax, random, value_and_grad, vmap
+from jax import grad, jit, lax, random, vmap
 
 from .base_agent import BaseDeepRLAgent
 
@@ -69,8 +69,8 @@ class DQN(BaseDeepRLAgent):
         optimizer_state: jnp.ndarray,
         loss_fn: Callable,
     ):
-        loss_grad_fn = value_and_grad(loss_fn)
-        loss_val, grads = loss_grad_fn(model_params)
+        loss_grad_fn = grad(loss_fn)
+        grads = loss_grad_fn(model_params)
         updates, optimizer_state = optimizer.update(grads, optimizer_state)
         model_params = optax.apply_updates(model_params, updates)
 
