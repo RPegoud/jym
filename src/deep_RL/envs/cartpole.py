@@ -88,7 +88,7 @@ class CartPole(ControlBaseEnv):
             | (theta > self.theta_limit_rads)
             | (theta < -self.theta_limit_rads)
         )
-        reward = jnp.int32(done)
+        reward = jnp.int32(jnp.invert(done))
 
         new_state = (x, x_dot, theta, theta_dot)
         env_state = self._reset_if_done(env_state, done)

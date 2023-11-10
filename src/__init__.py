@@ -6,7 +6,7 @@ from .bandits import (
     bandits_parallel_rollout,
     bandits_rollout,
 )
-from .deep_RL import CartPole
+from .deep_RL import DQN, CartPole, UniformReplayBuffer
 from .tabular import (
     CliffWalking,
     Double_Q_learning,
