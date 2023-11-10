@@ -30,6 +30,10 @@ class UniformReplayBuffer(BaseReplayBuffer):
             buffer (dict): the buffer to sample experiences from,
                 keys: "states", "actions", "rewards", "next_states", "dones"
             n_experiences (int): the number of experiences currently stocked in the buffer
+
+        returns:
+            dict[str: jnp.ndarray]: A dictionary with keys "states", "actions", "next_states",
+            "dones", "rewards"
         """
 
         # used to avoid sampling from empty experiences, i.e. zeros
@@ -49,5 +53,10 @@ class UniformReplayBuffer(BaseReplayBuffer):
             choices,
             shape=(self.batch_size,),
         )
-        samples = sample_batch(indexes, buffer)
-        return [exp for exp in zip(*samples.values())]
+        experiences = sample_batch(indexes, buffer)
+        return experiences
+        # states, actions, next_states, dones, rewards = tree_map(
+        #     lambda name: experiences[name],
+        #     ["states", "actions", "next_states", "dones", "rewards"],
+        # )
+        # return states, actions, next_states, dones, rewards

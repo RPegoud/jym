@@ -1,5 +1,4 @@
 from functools import partial
-from typing import Callable
 
 import haiku as hk
 import jax.numpy as jnp
@@ -61,28 +60,13 @@ class DQN(BaseDeepRLAgent):
 
     #     return lax.fori_loop(0, n_updates, _update_loop, val_init)
 
-    @jit
-    def update(
-        self,
-        model_params: dict,
-        optimizer: optax.GradientTransformation,
-        optimizer_state: jnp.ndarray,
-        loss_fn: Callable,
-    ):
-        loss_grad_fn = grad(loss_fn)
-        grads = loss_grad_fn(model_params)
-        updates, optimizer_state = optimizer.update(grads, optimizer_state)
-        model_params = optax.apply_updates(model_params, updates)
-
-        return model_params, optimizer_state
-
     @partial(jit, static_argnums=(0))
     def act(self, key: random.PRNGKey, model_params: dict, state: jnp.ndarray):
         def _random_action(subkey):
             return random.choice(subkey, jnp.arange(state.shape[-1]))
 
         def _forward_pass(_):
-            q_values = self.model.apply(model_params, state)
+            q_values = self.model.apply(model_params, None, state)
             return jnp.argmax(q_values)
 
         explore = random.uniform(key) < self.epsilon
@@ -95,41 +79,57 @@ class DQN(BaseDeepRLAgent):
         )
         return action, subkey
 
-    @partial(jit, static_argnums=(0))
-    def batch_loss_fn(
+    @partial(jit, static_argnames=("self", "optimizer"))
+    def update(
         self,
         model_params: dict,
         target_net_params: dict,
-        states: jnp.ndarray,
-        actions: jnp.ndarray,
-        next_states: jnp.ndarray,
-        dones: jnp.ndarray,
-        rewards: jnp.ndarray,
+        optimizer: optax.GradientTransformation,
+        optimizer_state: jnp.ndarray,
+        experiences: dict[str : jnp.ndarray],
     ):
-        @partial(vmap, in_axes=(None, None, 0, 0, 0, 0, 0))
-        def _loss_fn(
-            model_params, target_net_params, state, action, next_state, done, reward
+        @jit
+        def batch_loss_fn(
+            model_params,
+            target_net_params,
+            states,
+            actions,
+            next_states,
+            dones,
+            rewards,
         ):
-            target = lax.cond(
-                jnp.all(done is True),
-                lambda _: 0.0,
-                lambda _: self.discount
-                * jnp.max(
-                    self.model.apply(target_net_params, None, next_state),
-                ),
-                operand=None,
-            )
-            prediction = self.model.apply(model_params, None, state)[action]
-            return jnp.square(reward + target - prediction)
+            @partial(vmap, in_axes=(None, None, 0, 0, 0, 0, 0))
+            def _loss_fn(
+                model_params, target_net_params, state, action, next_state, done, reward
+            ):
+                target = lax.cond(
+                    jnp.all(done is True),
+                    lambda _: 0.0,
+                    lambda _: self.discount
+                    * jnp.max(
+                        self.model.apply(target_net_params, None, next_state),
+                    ),
+                    operand=None,
+                )
+                prediction = self.model.apply(model_params, None, state)[action]
+                return jnp.square(reward + target - prediction)
 
-        return jnp.mean(
-            _loss_fn(
-                model_params,
-                target_net_params,
-                states,
-                actions,
-                next_states,
-                dones,
-                rewards,
+            return jnp.mean(
+                _loss_fn(
+                    model_params,
+                    target_net_params,
+                    states,
+                    actions,
+                    next_states,
+                    dones,
+                    rewards,
+                ),
+                axis=0,
             )
-        )
+
+        grad_fn = grad(batch_loss_fn)
+        grads = grad_fn(model_params, target_net_params, **experiences)
+        updates, optimizer_state = optimizer.update(grads, optimizer_state)
+        model_params = optax.apply_updates(model_params, updates)
+
+        return model_params, optimizer_state
