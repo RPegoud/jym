@@ -45,10 +45,10 @@ def tabular_rollout(
 
         # random keys used for policy / action selection
         action_key = random.PRNGKey(0)
-        env_states, _ = env.reset(key)
+        env_state, _ = env.reset(key)
 
         val_init = (
-            env_states,
+            env_state,
             action_key,
             all_obs,
             all_rewards,

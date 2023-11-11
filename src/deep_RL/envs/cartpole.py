@@ -45,10 +45,18 @@ class CartPole(ControlBaseEnv):
     @partial(jit, static_argnums=0)
     def _reset_if_done(self, env_state, done):
         key = env_state[1]
+
+        def reset_fn(key):
+            # Assuming _reset returns a tuple of the same structure as env_state
+            return self._reset(key)
+
+        def no_reset_fn(key):
+            return env_state
+
         return lax.cond(
             done,
-            self._reset,
-            lambda key: env_state,
+            reset_fn,
+            no_reset_fn,
             operand=key,
         )
 
@@ -64,6 +72,7 @@ class CartPole(ControlBaseEnv):
             operand=None,
         )
         cos_theta, sin_theta = jnp.cos(theta), jnp.sin(theta)
+
         temp = (
             force + self.polemass_length * jnp.square(theta_dot) * sin_theta
         ) / self.total_mass
@@ -71,7 +80,6 @@ class CartPole(ControlBaseEnv):
             self.length
             * (4.0 / 3.0 - self.masspole * jnp.square(cos_theta) / self.total_mass)
         )
-
         x_accel = (
             temp - self.polemass_length * theta_accel * cos_theta / self.total_mass
         )
@@ -82,6 +90,8 @@ class CartPole(ControlBaseEnv):
         theta += theta + self.tau * theta_dot
         theta_dot += self.tau * theta_accel
 
+        new_state = jnp.array([x, x_dot, theta, theta_dot])
+
         done = (
             (x < -self.x_limit)
             | (x > self.x_limit)
@@ -90,7 +100,7 @@ class CartPole(ControlBaseEnv):
         )
         reward = jnp.int32(jnp.invert(done))
 
-        new_state = (x, x_dot, theta, theta_dot)
+        env_state = new_state, key
         env_state = self._reset_if_done(env_state, done)
         new_state = env_state[0]
 

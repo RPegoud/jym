@@ -3,7 +3,7 @@ from functools import partial
 import haiku as hk
 import jax.numpy as jnp
 import optax
-from jax import grad, jit, lax, random, vmap
+from jax import jit, lax, random, value_and_grad, vmap
 
 from .base_agent import BaseDeepRLAgent
 
@@ -95,9 +95,9 @@ class DQN(BaseDeepRLAgent):
                 axis=0,
             )
 
-        grad_fn = grad(batch_loss_fn)
-        grads = grad_fn(model_params, target_net_params, **experiences)
+        loss_grad_fn = value_and_grad(batch_loss_fn)
+        loss, grads = loss_grad_fn(model_params, target_net_params, **experiences)
         updates, optimizer_state = optimizer.update(grads, optimizer_state)
         model_params = optax.apply_updates(model_params, updates)
 
-        return model_params, optimizer_state
+        return model_params, optimizer_state, loss
