@@ -62,6 +62,8 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * Q-learning
     * Expected SARSA
     * Double Q-learning
+  * Deep RL:
+      * Deep Q Network (DQN)
 * 🌍 Environments:
   * Bandits
     * Casino *(fancy name for K-armed Bandits)*
@@ -76,8 +78,6 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * UCB (Upper Confidence Bound)
   * Tabular:
     * Dyna-Q, Dyna-Q+
-  * Deep RL:
-    * Deep Q Network (DQN)
 * 🌍 Environments:
   * Frozen Lake
   * CartPole
