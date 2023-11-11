@@ -4,10 +4,10 @@ from functools import partial
 import jax.numpy as jnp
 from jax import jit, lax, random
 
-from .base_env import ControlBaseEnv
+from .base_env import BaseControlEnv
 
 
-class CartPole(ControlBaseEnv):
+class CartPole(BaseControlEnv):
     def __init__(self) -> None:
         self.gravity = 9.8
         self.masscart = 1.0

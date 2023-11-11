@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ControlBaseEnv(ABC):
+class BaseControlEnv(ABC):
     def __init__(self) -> None:
         pass
 
