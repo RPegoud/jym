@@ -99,7 +99,7 @@ def animated_heatmap(
     fig.show()
 
 
-def plot_path(obs):
+def plot_path(obs, title: str = None):
     df_obs = pd.DataFrame(obs)
-    fig = px.imshow((pd.crosstab(df_obs[0], df_obs[1])), title="State visit count")
+    fig = px.imshow((pd.crosstab(df_obs[0], df_obs[1])), title=title)
     fig.show()
