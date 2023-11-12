@@ -14,17 +14,21 @@ class DQN(BaseDeepRLAgent):
         discount: float,
         learning_rate: float,
         model: hk.Transformed,
-        epsilon: float,
     ) -> None:
         super(DQN, self).__init__(
             discount,
             learning_rate,
         )
         self.model = model
-        self.epsilon = epsilon
 
     @partial(jit, static_argnums=(0))
-    def act(self, key: random.PRNGKey, model_params: dict, state: jnp.ndarray):
+    def act(
+        self,
+        key: random.PRNGKey,
+        model_params: dict,
+        state: jnp.ndarray,
+        epsilon: float,
+    ):
         """
         Epsilon-Greedy policy with respect to the estimated Q-values.
         """
@@ -36,7 +40,7 @@ class DQN(BaseDeepRLAgent):
             q_values = self.model.apply(model_params, None, state)
             return jnp.argmax(q_values)
 
-        explore = random.uniform(key) < self.epsilon
+        explore = random.uniform(key) < epsilon
         key, subkey = random.split(key)
         action = lax.cond(
             explore,

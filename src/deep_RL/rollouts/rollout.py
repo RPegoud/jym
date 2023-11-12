@@ -1,3 +1,5 @@
+from typing import Callable
+
 import haiku as hk
 import jax.numpy as jnp
 import optax
@@ -20,7 +22,11 @@ def DeepRlRollout(
     env: BaseControlEnv,
     replay_buffer: BaseReplayBuffer,
     state_shape: int,
-    buffer_size: int = 1024,
+    buffer_size: int,
+    epsilon_decay_fn: Callable,
+    epsilon_start: float,
+    epsilon_end: float,
+    decay_rate: float,
 ):
     @loop_tqdm(timesteps)
     @jit
@@ -40,7 +46,8 @@ def DeepRlRollout(
         ) = val
 
         state, _ = env_state
-        action, action_key = agent.act(action_key, model_params, state)
+        epsilon = epsilon_decay_fn(epsilon_start, epsilon_end, i, decay_rate)
+        action, action_key = agent.act(action_key, model_params, state, epsilon)
         env_state, obs, reward, done = env.step(env_state, action)
         experience = (state, action, reward, obs, done)
 

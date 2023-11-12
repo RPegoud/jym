@@ -47,7 +47,6 @@ class CartPole(BaseControlEnv):
         key = env_state[1]
 
         def reset_fn(key):
-            # Assuming _reset returns a tuple of the same structure as env_state
             return self._reset(key)
 
         def no_reset_fn(key):
