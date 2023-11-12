@@ -42,8 +42,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
   </tr>
 </table>
 
-
-## 🌟 ***Key Features*** 
+## 🌟 ***Key Features***
 
 * 🐍  **Clean** and **beginner-friendly** implementation of **Reinforcement Learning algorithms** in **JAX**
 * ⚡ **Vectorized environments** for lightning-fast training
@@ -63,13 +62,15 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * Expected SARSA
     * Double Q-learning
   * Deep RL:
-      * Deep Q Network (DQN)
+    * Deep Q-Network (DQN)
 * 🌍 Environments:
   * Bandits
     * Casino *(fancy name for K-armed Bandits)*
   * Tabular
     * GridWorld
     * Cliff Walking
+  * Continuous Control
+    * CartPole
 
 ## ⌛ ***Coming Soon***
 
@@ -80,7 +81,6 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * Dyna-Q, Dyna-Q+
 * 🌍 Environments:
   * Frozen Lake
-  * CartPole
 
 ## 🧪 ***Experiments***
 
@@ -156,13 +156,6 @@ To install and set up the project, follow these steps:
    ```bash
    poetry shell
    ```
-
-## Use
-
-1. Modify the main.py file depending on the test you want to perform and run:
-
-   ```bash
-   python main.py
 
 ## 📝 References
 
