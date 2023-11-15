@@ -29,9 +29,6 @@ class BaseReplayBuffer(ABC):
         buffer["next_states"] = buffer["next_states"].at[idx].set(next_state)
         buffer["dones"] = buffer["dones"].at[idx].set(done)
 
-        # conditionally reset the index
-        # idx = (idx + 1) % self.buffer_size
-
         return buffer
 
     @abstractmethod

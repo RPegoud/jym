@@ -23,6 +23,7 @@ def DeepRlRollout(
     replay_buffer: BaseReplayBuffer,
     state_shape: int,
     buffer_size: int,
+    batch_size: int,
     epsilon_decay_fn: Callable,
     epsilon_start: float,
     epsilon_end: float,
@@ -39,6 +40,7 @@ def DeepRlRollout(
             action_key,
             buffer_key,
             env_state,
+            all_actions,
             all_obs,
             all_rewards,
             all_done,
@@ -48,13 +50,16 @@ def DeepRlRollout(
         state, _ = env_state
         epsilon = epsilon_decay_fn(epsilon_start, epsilon_end, i, decay_rate)
         action, action_key = agent.act(action_key, model_params, state, epsilon)
-        env_state, obs, reward, done = env.step(env_state, action)
-        experience = (state, action, reward, obs, done)
+        env_state, new_state, reward, done = env.step(env_state, action)
+        experience = (state, action, reward, new_state, done)
 
         buffer_state = replay_buffer.add(buffer_state, experience, i)
         current_buffer_size = jnp.min(jnp.array([i, buffer_size]))
+
         experiences_batch, buffer_key = replay_buffer.sample(
-            buffer_key, buffer_state, current_buffer_size
+            buffer_key,
+            buffer_state,
+            current_buffer_size,
         )
 
         model_params, optimizer_state, loss = agent.update(
@@ -65,14 +70,16 @@ def DeepRlRollout(
             experiences_batch,
         )
 
+        # update the target parameters every ``target_net_update_freq`` steps
         target_net_params = lax.cond(
-            i % target_net_update_freq,
+            i % target_net_update_freq == 0,
             lambda _: model_params,
             lambda _: target_net_params,
             operand=None,
         )
 
-        all_obs = all_obs.at[i].set(obs)
+        all_actions = all_actions.at[i].set(action)
+        all_obs = all_obs.at[i].set(new_state)
         all_rewards = all_rewards.at[i].set(reward)
         all_done = all_done.at[i].set(done)
         losses = losses.at[i].set(loss)
@@ -85,6 +92,7 @@ def DeepRlRollout(
             action_key,
             buffer_key,
             env_state,
+            all_actions,
             all_obs,
             all_rewards,
             all_done,
@@ -95,12 +103,13 @@ def DeepRlRollout(
 
     init_key, action_key, buffer_key = vmap(random.PRNGKey)(jnp.arange(3) + random_seed)
     env_state, _ = env.reset(init_key)
+    all_actions = jnp.zeros([timesteps])
     all_obs = jnp.zeros([timesteps, state_shape])
-    all_rewards = jnp.zeros([timesteps], dtype=jnp.int32)
+    all_rewards = jnp.zeros([timesteps], dtype=jnp.float32)
     all_done = jnp.zeros([timesteps], dtype=jnp.bool_)
     losses = jnp.zeros([timesteps], dtype=jnp.float32)
 
-    model_params = model.init(action_key, jnp.zeros((state_shape,)))
+    model_params = model.init(init_key, jnp.zeros((state_shape,)))
     target_net_params = model.init(action_key, jnp.zeros((state_shape,)))
     optimizer_state = optimizer.init(model_params)
 
@@ -112,6 +121,7 @@ def DeepRlRollout(
         action_key,
         buffer_key,
         env_state,
+        all_actions,
         all_obs,
         all_rewards,
         all_done,
@@ -128,6 +138,7 @@ def DeepRlRollout(
         "action_key",
         "buffer_key",
         "env_state",
+        "all_actions",
         "all_obs",
         "all_rewards",
         "all_done",

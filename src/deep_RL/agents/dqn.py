@@ -11,15 +11,17 @@ from .base_agent import BaseDeepRLAgent
 class DQN(BaseDeepRLAgent):
     def __init__(
         self,
+        model: hk.Transformed,
         discount: float,
         learning_rate: float,
-        model: hk.Transformed,
+        n_actions: int,
     ) -> None:
         super(DQN, self).__init__(
             discount,
             learning_rate,
         )
         self.model = model
+        self.n_actions = n_actions
 
     @partial(jit, static_argnums=(0))
     def act(
@@ -34,7 +36,7 @@ class DQN(BaseDeepRLAgent):
         """
 
         def _random_action(subkey):
-            return random.choice(subkey, jnp.arange(state.shape[-1]))
+            return random.choice(subkey, jnp.arange(self.n_actions))
 
         def _forward_pass(_):
             q_values = self.model.apply(model_params, None, state)
@@ -57,7 +59,9 @@ class DQN(BaseDeepRLAgent):
         target_net_params: dict,
         optimizer: optax.GradientTransformation,
         optimizer_state: jnp.ndarray,
-        experiences: dict[str : jnp.ndarray],
+        experiences: dict[
+            str : jnp.ndarray
+        ],  # states, actions, next_states, dones, rewards
     ):
         @jit
         def batch_loss_fn(
@@ -65,26 +69,20 @@ class DQN(BaseDeepRLAgent):
             target_net_params: dict,
             states: jnp.ndarray,
             actions: jnp.ndarray,
+            rewards: jnp.ndarray,
             next_states: jnp.ndarray,
             dones: jnp.ndarray,
-            rewards: jnp.ndarray,
         ):
             # vectorize the loss over states, actions, next_states, done flags and rewards
             @partial(vmap, in_axes=(None, None, 0, 0, 0, 0, 0))
             def _loss_fn(
-                model_params, target_net_params, state, action, next_state, done, reward
+                model_params, target_net_params, state, action, reward, next_state, done
             ):
-                target = lax.cond(
-                    jnp.all(done is True),
-                    lambda _: 0.0,
-                    lambda _: self.discount
-                    * jnp.max(
-                        self.model.apply(target_net_params, None, next_state),
-                    ),
-                    operand=None,
+                target = reward + (1 - done) * self.discount * jnp.max(
+                    self.model.apply(target_net_params, None, next_state),
                 )
                 prediction = self.model.apply(model_params, None, state)[action]
-                return jnp.square(reward + target - prediction)
+                return jnp.square(target - prediction)
 
             return jnp.mean(
                 _loss_fn(
@@ -92,15 +90,16 @@ class DQN(BaseDeepRLAgent):
                     target_net_params,
                     states,
                     actions,
+                    rewards,
                     next_states,
                     dones,
-                    rewards,
                 ),
                 axis=0,
             )
 
-        loss_grad_fn = value_and_grad(batch_loss_fn)
-        loss, grads = loss_grad_fn(model_params, target_net_params, **experiences)
+        loss, grads = value_and_grad(batch_loss_fn)(
+            model_params, target_net_params, **experiences
+        )
         updates, optimizer_state = optimizer.update(grads, optimizer_state)
         model_params = optax.apply_updates(model_params, updates)
 
