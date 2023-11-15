@@ -62,7 +62,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * Expected SARSA
     * Double Q-learning
   * Deep RL:
-    * Deep QNetwork (DQN)
+    * Deep Q-Network (DQN)
 * 🌍 Environments:
   * Bandits
     * Casino *(fancy name for K-armed Bandits)*
@@ -91,6 +91,8 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
 </a>
 
   Reproduction of the 10-armed Testbed experiment presented in [***Reinforcement Learning: An Introduction***](http://incompleteideas.net/book/the-book-2nd.html) (chapter 2.3, page 28-29).
+
+  This experiment showcases the difference in performance between different values of epsilon and therefore the long-term tradeoff between exploration and exploitation.
   
 <div align="center">
   <table>
@@ -100,7 +102,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
         <p align="center">10-armed Testebed environment</p>
       </td>
       <td>
-        <a href="https://plotly.com/~Ryan_pgd/7/?share_key=XO3yJyF8asLycAUymU4pbS" target="_blank" title="K-armed Bandits Testbed distribution"><img src="https://plotly.com/~Ryan_pgd/7.png?share_key=XO3yJyF8asLycAUymU4pbS" alt="K-armed Bandits Testbed distribution" width="370"/></a>
+        <a href="https://plotly.com/~Ryan_pgd/7/?share_key=XO3yJyF8asLycAUymU4pbS" target="_blank" title="K-armed Bandits Testbed distribution"><img src="https://plotly.com/~Ryan_pgd/7.png?share_key=XO3yJyF8asLycAUymU4pbS" alt="K-armed Bandits Testbed distribution" width="415"/></a>
         <p align="center">K-armed Bandits JAX environment</p>
       </td>
     </tr>
@@ -118,6 +120,32 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     <td>
       <a href="https://plotly.com/~Ryan_pgd/9/?share_key=B9eEph84sA0EoX3XL7eFhs" target="_blank" title="10-Armed bandits testbed reproduction"><img src="https://plotly.com/~Ryan_pgd/9.png?share_key=B9eEph84sA0EoX3XL7eFhs" alt="K-armed Bandits Testbed" width="400"/></a>
     <p align="center">Replicated results using the K-armed Bandits JAX environment</p>
+    </td>
+  </tr>
+</table>
+</div>
+
+
+* ### **Cliff Walking**
+
+<a href="https://github.com/RPegoud/jym/blob/main/notebooks/tabular/cliff_walking/q_learning_cliff_walking.ipynbb">
+ <img src="https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white">
+</a>
+
+Reproduction of the CliffWalking environment presented in Reinforcement Learning: An Introduction (chapter 6, page 132).
+
+This experiment highlights the difference in behavior between TD algorithms, Q-learning being greedy (as the td target is the maximum Q-value over the next state) and Expected Sarsa being safer (td target: expected Q-value over the next state).
+
+<div align="center">
+<table>
+  <tr>
+    <td>
+      <img src="https://live.staticflickr.com/65535/49199511478_3054654b30.jpg" width="430"/>
+      <p align="center">Described behaviour for the CliffWalking environment</p>
+    </td>
+    <td>
+      <a><img src="https://raw.githubusercontent.com/RPegoud/jym/main/images/Cliff_walking.jpg" alt="" width="400"/></a>
+    <p align="center">Comparison of Q-learning and Expected Sarsa on CliffWalking</p>
     </td>
   </tr>
 </table>
