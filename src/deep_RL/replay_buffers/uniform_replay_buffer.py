@@ -17,7 +17,7 @@ class UniformReplayBuffer(BaseReplayBuffer):
     def sample(
         self,
         key: random.PRNGKey,
-        buffer: dict,
+        buffer_state: dict,
         current_buffer_size: int,
     ):
         """
@@ -28,7 +28,7 @@ class UniformReplayBuffer(BaseReplayBuffer):
             key (random.PRNGKey): the random key used to sample the buffer
             buffer (dict): the buffer to sample experiences from,
                 keys: "states", "actions", "rewards", "next_states", "dones"
-            current_buffer_size (int): the number of experiences currently stocked in the buffer
+            current_buffer_size (int): the number of experiences currently stored in the buffer
 
         returns:
             dict[str: jnp.ndarray]: A dictionary with keys "states", "actions", "next_states",
@@ -46,6 +46,6 @@ class UniformReplayBuffer(BaseReplayBuffer):
             minval=0,
             maxval=current_buffer_size,
         )
-        experiences = sample_batch(indexes, buffer)
+        experiences = sample_batch(indexes, buffer_state)
 
         return experiences, subkey

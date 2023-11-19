@@ -16,20 +16,22 @@ class BaseReplayBuffer(ABC):
     @partial(jit, static_argnums=(0))
     def add(
         self,
-        buffer: dict,
+        buffer_state: dict,
         experience: tuple,
         idx: int,
     ):
         state, action, reward, next_state, done = experience
         idx = idx % self.buffer_size
 
-        buffer["states"] = buffer["states"].at[idx].set(state)
-        buffer["actions"] = buffer["actions"].at[idx].set(action)
-        buffer["rewards"] = buffer["rewards"].at[idx].set(reward)
-        buffer["next_states"] = buffer["next_states"].at[idx].set(next_state)
-        buffer["dones"] = buffer["dones"].at[idx].set(done)
+        buffer_state["states"] = buffer_state["states"].at[idx].set(state)
+        buffer_state["actions"] = buffer_state["actions"].at[idx].set(action)
+        buffer_state["rewards"] = buffer_state["rewards"].at[idx].set(reward)
+        buffer_state["next_states"] = (
+            buffer_state["next_states"].at[idx].set(next_state)
+        )
+        buffer_state["dones"] = buffer_state["dones"].at[idx].set(done)
 
-        return buffer
+        return buffer_state
 
     @abstractmethod
     def sample(self):
