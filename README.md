@@ -80,7 +80,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
   * Tabular:
     * Dyna-Q, Dyna-Q+
 * 🌍 Environments:
-  * Frozen Lake
+  * MinAtar (mini Atari:  Asterix, Breakout, Freeway, Seaquest, SpaceInvaders)
 
 ## 🧪 ***Experiments***
 
@@ -145,7 +145,7 @@ This experiment highlights the difference in behavior between TD algorithms, Q-l
     </td>
     <td>
       <a><img src="https://raw.githubusercontent.com/RPegoud/jym/main/images/Cliff_walking.jpg" alt="" width="400"/></a>
-    <p align="center">Comparison of Q-learning and Expected Sarsa on CliffWalking</p>
+    <p align="center">Comparison of Expected Sarsa (top) and Q-learning (bottom) on CliffWalking</p>
     </td>
   </tr>
 </table>
