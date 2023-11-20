@@ -103,16 +103,16 @@ class CartPole(BaseEnv):
     def _reset_if_done(self, env_state, done):
         key = env_state[1]
 
-        def reset_fn(key):
+        def _reset_fn(key):
             return self._reset(key)
 
-        def no_reset_fn(key):
+        def _no_reset_fn(key):
             return env_state
 
         return lax.cond(
             done,
-            reset_fn,
-            no_reset_fn,
+            _reset_fn,
+            _no_reset_fn,
             operand=key,
         )
 

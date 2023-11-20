@@ -10,6 +10,7 @@ from .agents import (
 from .envs import (
     BanditsBaseEnv,
     BaseEnv,
+    Breakout,
     CartPole,
     CliffWalking,
     GridWorld,
