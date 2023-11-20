@@ -1,26 +1,37 @@
-from .bandits import (
-    BanditEpsilonGreedy,
-    K_armed_bandits,
+from .agents import (
+    DQN,
+    BaseDeepRLAgent,
+    BaseTabularAgent,
+    Double_Q_learning,
+    Expected_Sarsa,
+    Q_learning,
     SimpleBandit,
+)
+from .envs import (
+    BanditsBaseEnv,
+    BaseEnv,
+    CartPole,
+    CliffWalking,
+    GridWorld,
+    K_armed_bandits,
+)
+from .policies import (
+    BanditEpsilonGreedy,
+    BasePolicy,
+    DoubleEpsilonGreedy,
+    EpsilonGreedy,
+    Softmax_policy,
+)
+from .utils import (
+    BaseReplayBuffer,
+    UniformReplayBuffer,
+    animated_heatmap,
     bandits_multi_run_parallel_rollout,
     bandits_parallel_rollout,
     bandits_rollout,
-)
-from .deep_RL import DQN, CartPole, DeepRlRollout, UniformReplayBuffer
-from .tabular import (
-    CliffWalking,
-    Double_Q_learning,
-    DoubleEpsilonGreedy,
-    EpsilonGreedy,
-    Expected_Sarsa,
-    GridWorld,
-    Q_learning,
-    Softmax_policy,
-    animated_heatmap,
-    double_rollout,
+    deep_rl_rollout,
     plot_path,
-    tabular_double_training_loops,
+    tabular_double_rollout,
     tabular_parallel_rollout,
     tabular_rollout,
-    tabular_training_loops,
 )
