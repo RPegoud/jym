@@ -50,6 +50,10 @@ class Breakout(BaseEnv):
         self.obs_shape = (10, 10, 4)  # x, y, channels [paddle, ball, trail, brick]
         self.actions = jnp.arange(3)  # no action, left, right
 
+    @property
+    def n_actions(self) -> int:
+        return len(self.actions)
+
     def __repr__(self) -> str:
         return str(self.__dict__)
 
