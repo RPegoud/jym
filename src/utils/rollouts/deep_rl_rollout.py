@@ -103,13 +103,13 @@ def deep_rl_rollout(
     init_key, action_key, buffer_key = vmap(random.PRNGKey)(jnp.arange(3) + random_seed)
     env_state, _ = env.reset(init_key)
     all_actions = jnp.zeros([timesteps])
-    all_obs = jnp.zeros([timesteps, state_shape])
+    all_obs = jnp.zeros([timesteps, *state_shape])
     all_rewards = jnp.zeros([timesteps], dtype=jnp.float32)
     all_done = jnp.zeros([timesteps], dtype=jnp.bool_)
     losses = jnp.zeros([timesteps], dtype=jnp.float32)
 
-    model_params = model.init(init_key, jnp.zeros((state_shape,)))
-    target_net_params = model.init(action_key, jnp.zeros((state_shape,)))
+    model_params = model.init(init_key, jnp.zeros(state_shape))
+    target_net_params = model.init(action_key, jnp.zeros(state_shape))
     optimizer_state = optimizer.init(model_params)
 
     val_init = (
