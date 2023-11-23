@@ -272,8 +272,7 @@ def step_ball_brick(state: EnvState, new_x: int, new_y: int) -> Tuple[EnvState, 
         jnp.invert(redirect_ball_old), jnp.invert(redirect_ball_new)
     )
 
-    # The game ends if the ball is on the bottom row and is not
-    # being redirected
+    # The game ends if the ball is on the bottom row and is not being redirected
     done = jnp.logical_and(brick_cond, not_redirected)
 
     # Update the strike state
