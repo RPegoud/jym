@@ -4,6 +4,7 @@ from .rollouts import (
     bandits_parallel_rollout,
     bandits_rollout,
     deep_rl_rollout,
+    minatar_rollout,
     tabular_double_rollout,
     tabular_parallel_rollout,
     tabular_rollout,

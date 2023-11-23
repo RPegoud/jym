@@ -1,8 +1,9 @@
+from functools import partial
 from typing import Tuple
 
 import jax.numpy as jnp
 from chex import dataclass
-from jax import lax, random
+from jax import jit, lax, random
 
 from ..base_envs import BaseEnv
 
@@ -60,9 +61,9 @@ class Breakout(BaseEnv):
     def n_actions(self) -> int:
         return len(self.actions)
 
-    def _get_obs(self, state: EnvState) -> jnp.array:
+    def _get_obs(self, state: EnvState) -> jnp.ndarray:
         """
-        Converts EnvStates to observations.
+        Converts EnvStates to observations (jnp.ndarray).
         """
         obs = jnp.zeros(self.obs_shape, dtype=jnp.bool_)
         obs = obs.at[9, state.pos, self.channels["paddle"]].set(1)
@@ -80,51 +81,50 @@ class Breakout(BaseEnv):
             jnp.array([0, 2]),  # ball in the leftmost column, going down/right
             jnp.array([9, 3]),  # ball in the rightmost column, going down/left
         )
-        env_state = (
-            EnvState(
-                ball_x=ball_x,
-                last_x=ball_x,
-                ball_y=3,
-                last_y=3,
-                ball_dir=ball_dir,
-                pos=4,
-                brick_map=jnp.zeros((10, 10)).at[1:4, :].set(1),
-                strike=False,
-                time=0,
-                done=False,
-            ),
-            subkey,
+        state = EnvState(
+            ball_x=ball_x,
+            last_x=ball_x,
+            ball_y=3,
+            last_y=3,
+            ball_dir=ball_dir,
+            pos=4,
+            brick_map=jnp.zeros((10, 10)).at[1:4, :].set(1),
+            strike=False,
+            time=0,
+            done=False,
         )
-        return env_state, self._get_obs(env_state[0])
+
+        return state, self._get_obs(state), subkey
 
     def _reset_if_done(
-        self, env_state: EnvState, key: random.PRNGKey
-    ) -> Tuple[jnp.array, EnvState]:
-        def _reset_fn(key):
-            return self._reset(key)
+        self, state: EnvState, env_key: random.PRNGKey
+    ) -> Tuple[EnvState, jnp.ndarray, random.PRNGKey]:
+        def _reset_fn(env_key):
+            return self._reset(env_key)
 
-        def _no_reset_fn(key):
-            return self._get_obs(state), state
+        def _no_reset_fn(env_key):
+            return state, self._get_obs(state), env_key
 
-        state, key = env_state
-        return lax.cond(state.done, _reset_fn, _no_reset_fn, operand=key)
+        return lax.cond(state.done, _reset_fn, _no_reset_fn, operand=env_key)
 
-    def step(self, env_state: EnvState, action: int):
-        state, key = env_state
-
+    @partial(jit, static_argnums=(0))
+    def step(self, state: EnvState, env_key: random.PRNGKey, action: int):
         state, new_x, new_y = agent_step(state, action)
         state, reward = step_ball_brick(state, new_x, new_y)
 
         state = state.replace(time=state.time + 1)
         done = jnp.logical_or(state.done, state.time >= self.max_steps_in_episode)
-        state = state.replace(terminal=done)
+        state = state.replace(done=done)
 
-        return state, self._get_obs(state), reward, done
+        state, obs, env_key = self._reset_if_done(state, env_key)
+
+        return state, obs, reward, done, env_key
 
     def reset(self, key: random.PRNGKey) -> Tuple[jnp.array, EnvState]:
         return self._reset(key)
 
 
+@jit
 def agent_step(state: EnvState, action: int) -> Tuple[EnvState, int, int]:
     """
     Handles agent movement and boundary checks.
@@ -191,6 +191,7 @@ def agent_step(state: EnvState, action: int) -> Tuple[EnvState, int, int]:
     )
 
 
+@jit
 def step_ball_brick(state: EnvState, new_x: int, new_y: int) -> Tuple[EnvState, float]:
     """
     Handles the ball's interaction with bricks and the paddle, and determines the game state.
@@ -252,7 +253,7 @@ def step_ball_brick(state: EnvState, new_x: int, new_y: int) -> Tuple[EnvState, 
     brick_map = lax.select(spawn_bricks, brick_map.at[1:4, :].set(1), brick_map)
 
     # Handle ball collision with paddle's old position
-    redirect_ball_old = jnp.logical_and(brick_cond, state.ball == state.pos)
+    redirect_ball_old = jnp.logical_and(brick_cond, state.ball_x == state.pos)
     ball_dir = lax.select(
         redirect_ball_old, jnp.array([3, 2, 1, 0])[ball_dir], ball_dir
     )
@@ -273,7 +274,7 @@ def step_ball_brick(state: EnvState, new_x: int, new_y: int) -> Tuple[EnvState, 
 
     # The game ends if the ball is on the bottom row and is not
     # being redirected
-    terminal = jnp.logical_and(brick_cond, not_redirected)
+    done = jnp.logical_and(brick_cond, not_redirected)
 
     # Update the strike state
     strike = jnp.bool_(strike_toggle)
@@ -285,7 +286,7 @@ def step_ball_brick(state: EnvState, new_x: int, new_y: int) -> Tuple[EnvState, 
             strike=strike,
             ball_x=new_x,
             ball_y=new_y,
-            terminal=terminal,
+            done=done,
         ),
         reward,
     )

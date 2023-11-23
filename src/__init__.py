@@ -31,6 +31,7 @@ from .utils import (
     bandits_parallel_rollout,
     bandits_rollout,
     deep_rl_rollout,
+    minatar_rollout,
     plot_path,
     tabular_double_rollout,
     tabular_parallel_rollout,
