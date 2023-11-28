@@ -25,6 +25,8 @@ from .policies import (
 )
 from .utils import (
     BaseReplayBuffer,
+    PrioritizedExperienceReplay,
+    SumTree,
     UniformReplayBuffer,
     animated_heatmap,
     bandits_multi_run_parallel_rollout,

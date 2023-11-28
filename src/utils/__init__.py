@@ -1,4 +1,9 @@
-from .replay_buffers import BaseReplayBuffer, UniformReplayBuffer
+from .replay_buffers import (
+    BaseReplayBuffer,
+    PrioritizedExperienceReplay,
+    SumTree,
+    UniformReplayBuffer,
+)
 from .rollouts import (
     bandits_multi_run_parallel_rollout,
     bandits_parallel_rollout,
