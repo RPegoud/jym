@@ -3,7 +3,7 @@ from typing import Tuple
 
 import jax.numpy as jnp
 from chex import dataclass
-from jax import jit, lax, random
+from jax import jit, lax, random, vmap
 
 from ..base_envs import BaseEnv
 
@@ -120,8 +120,22 @@ class Breakout(BaseEnv):
 
         return state, obs, reward, done, env_key
 
+    @partial(jit, static_argnums=(0))
     def reset(self, key: random.PRNGKey) -> Tuple[jnp.array, EnvState]:
         return self._reset(key)
+
+    @partial(jit, static_argnums=(0))
+    def batch_step(self, state: EnvState, env_key: random.PRNGKey, action: int):
+        return vmap(Breakout.step, in_axes=(None, 0, 0, 0))(
+            self, state, env_key, action
+        )
+
+    @partial(jit, static_argnums=(0))
+    def batch_reset(self, key: random.PRNGKey):
+        return vmap(
+            Breakout.reset,
+            in_axes=(None, 0),
+        )(self, key)
 
 
 @jit
@@ -289,76 +303,3 @@ def step_ball_brick(state: EnvState, new_x: int, new_y: int) -> Tuple[EnvState, 
         ),
         reward,
     )
-
-    # ORIGINAL GYMNAX VERSION
-    # reward = 0
-
-    # # Reflect the ball's direction if it hits the top border
-    # border_cond_y = new_y < 0
-    # new_y = jnp.clip(new_y, 0, 9)  # Ensure new_y remains within the grid
-
-    # ball_dir = lax.select(
-    #     border_cond_y,
-    #     jnp.array([3, 2, 1, 0])[state.ball_dir],
-    #     state.ball_dir,
-    # )
-
-    # # --- brick collision ---
-    # strike_toggle = jnp.logical_and(
-    #     jnp.invert(border_cond_y), state.brick_map[new_y, new_x] == 1
-    # )
-    # strike_bool = jnp.logical_and(jnp.invert(state.strike), strike_toggle)
-    # reward += jnp.float32(strike_bool)
-    # strike = lax.select(strike_toggle, strike_bool, False)
-
-    # # delete the brick after strike
-    # brick_map = lax.select(
-    #     strike_bool, state.brick_map.at[new_y, new_x].set(0), state.brick_map
-    # )
-    # # conditionally update the ball's position after strike
-    # new_y = lax.select(strike_bool, state.last_y, new_y)
-    # ball_dir = lax.select(
-    #     strike_bool,
-    #     jnp.array([3, 2, 1, 0])[ball_dir],
-    #     ball_dir,
-    # )
-
-    # # --- wall collision ---
-    # brick_cond = jnp.logical_and(jnp.invert(strike_toggle), new_y == 9)
-    # # spawn new bricks if brick map is empty
-    # spawn_bricks = jnp.logical_and(brick_cond, jnp.count_nonzero(brick_map) == 0)
-    # brick_map = lax.select(spawn_bricks, brick_map.at[1:4, :].set(1), brick_map)
-
-    # # redirect ball if it collides with the paddle's old position
-    # redirect_ball = jnp.logical_and(brick_cond, state.ball == state.pos)
-    # ball_dir = lax.select(redirect_ball, jnp.array([3, 2, 1, 0])[ball_dir], ball_dir)
-    # new_y = lax.select(redirect_ball, state.last_y, new_y)
-
-    # # redirect ball if it collides with the paddle's new position:
-    # # 1. the ball has not already been redirected
-    # redirect_ball_new = jnp.logical_and(brick_cond, jnp.invert(redirect_ball))
-    # # 2. check whether the ball and paddle collided
-    # redirect_ball_new2 = jnp.logical_and(redirect_ball_new, new_x == state.pos)
-    # ball_dir = lax.select(
-    #     redirect_ball_new2, jnp.array([2, 3, 0, 1])[ball_dir], ball_dir
-    # )
-    # new_y = lax.select(redirect_ball_new, state.last_y, new_y)
-    # # check whether both redirect flags are false
-    # not_redirected = jnp.logical_and(
-    #     jnp.invert(redirect_ball), jnp.invert(redirect_ball_new)
-    # )
-    # # the episode ends
-    # terminal = jnp.logical_and(brick_cond, not_redirected)
-    # strike = jnp.bool_(strike_toggle)
-
-    # return (
-    #     state.replace(
-    #         ball_dir=ball_dir,
-    #         brick_map=brick_map,
-    #         strike=strike,
-    #         ball_x=new_x,
-    #         ball_y=new_y,
-    #         terminal=terminal,
-    #     ),
-    #     reward,
-    # )

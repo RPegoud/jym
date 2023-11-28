@@ -2,16 +2,23 @@ import jax.numpy as jnp
 from jax import jit, lax, random
 from jax_tqdm import loop_tqdm
 
+from ...agents import SimpleBandit
+from ...envs import BanditsBaseEnv
+
 
 def bandits_rollout(
     key: random.PRNGKey,
     timesteps: int,
     bandits_q: list,
     epsilon: float,
-    env,
-    agent,
+    env: BanditsBaseEnv,
+    agent: SimpleBandit,
     policy,
 ):
+    """
+    Trains a single bandit agent.
+    """
+
     @jit
     @loop_tqdm(timesteps)
     def fori_body(i: int, val: tuple):
@@ -41,10 +48,15 @@ def bandits_parallel_rollout(
     n_env: int,
     bandits_q: list,
     epsilons: list,
-    env,
-    agent,
+    env: BanditsBaseEnv,
+    agent: SimpleBandit,
     policy,
 ):
+    """
+    Trains multiple bandit agents in parallel, each with an independent
+    epsilon parameter.
+    """
+
     @jit
     @loop_tqdm(timesteps)
     def fori_body(i: int, val: tuple):
@@ -76,10 +88,15 @@ def bandits_multi_run_parallel_rollout(
     n_runs: int,
     bandits_q: jnp.array,
     epsilons: list,
-    env,
-    agent,
+    env: BanditsBaseEnv,
+    agent: SimpleBandit,
     policy,
 ):
+    """
+    Trains multiple bandit agents for multiple runs in parallel,
+    each with an independent epsilon parameter.
+    """
+
     @jit
     @loop_tqdm(timesteps)
     def fori_body(i: int, val: tuple):

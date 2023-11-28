@@ -108,3 +108,39 @@ class DQN(BaseDeepRLAgent):
         online_net_params = optax.apply_updates(online_net_params, updates)
 
         return online_net_params, optimizer_state, loss
+
+    @partial(jit, static_argnums=(0))
+    def batch_act(
+        self,
+        key: random.PRNGKey,
+        online_net_params: dict,
+        state: jnp.ndarray,
+        epsilon: float,
+    ):
+        return vmap(
+            DQN.act,
+            in_axes=(None, 0, 0, 0, 0),
+        )(self, key, online_net_params, state, epsilon)
+
+    @partial(jit, static_argnames=("self", "optimizer"))
+    def batch_update(
+        self,
+        online_net_params: dict,
+        target_net_params: dict,
+        optimizer: optax.GradientTransformation,
+        optimizer_state: jnp.ndarray,
+        experiences: dict[
+            str : jnp.ndarray
+        ],  # states, actions, next_states, dones, rewards
+    ):
+        return vmap(
+            DQN.update,
+            in_axes=(0, 0, None, 0, 0),
+        )(
+            self,
+            online_net_params,
+            target_net_params,
+            optimizer,
+            optimizer_state,
+            experiences,
+        )
