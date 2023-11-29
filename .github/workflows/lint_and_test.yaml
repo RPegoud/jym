@@ -25,7 +25,7 @@ jobs:
           python -m pip install poetry==1.5.1
 
       - name: Regenerate lock file
-        run: poetry lock --no update
+        run: poetry lock --no-update
 
       - name: Configure Poetry
         run: |
