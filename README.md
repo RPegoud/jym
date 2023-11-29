@@ -71,6 +71,8 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
     * Cliff Walking
   * Continuous Control
     * CartPole
+  * MinAtar:
+    * Breakout
 
 ## ⌛ ***Coming Soon***
 
@@ -80,7 +82,7 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
   * Tabular:
     * Dyna-Q, Dyna-Q+
 * 🌍 Environments:
-  * MinAtar (mini Atari:  Asterix, Breakout, Freeway, Seaquest, SpaceInvaders)
+  * MinAtar (mini Atari: Asterix, Breakout, Freeway, Seaquest, SpaceInvaders)
 
 ## 🧪 ***Experiments***
 
@@ -124,7 +126,6 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
   </tr>
 </table>
 </div>
-
 
 * ### **Cliff Walking**
 

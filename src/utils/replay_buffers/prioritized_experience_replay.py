@@ -1,7 +1,8 @@
+from functools import partial
 from typing import Tuple
 
 import jax.numpy as jnp
-from jax import lax
+from jax import lax, vmap
 
 from .base_buffer import BaseReplayBuffer
 
@@ -13,6 +14,10 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
 
 
 class SumTree:
+    """
+    SumTree utilities used to manipulate an external tree state
+    """
+
     def __init__(self, capacity: int) -> None:
         """
         Args:
@@ -83,6 +88,14 @@ class SumTree:
         val_init = (idx, tree)
         _, tree = lax.while_loop(_cond_fn, _while_body, val_init)
         return tree
+
+    @partial(vmap, in_axes=(None, None, 0))
+    def sample_batch(self, tree, value):
+        """
+        Applies the get_leaf function to a batch of values,
+        used for sampling from the replay buffer.
+        """
+        return self.get_leaf(tree, value)
 
     def get_leaf(self, tree: jnp.ndarray, value: float) -> Tuple[int, int, float]:
         """
