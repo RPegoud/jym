@@ -3,7 +3,7 @@ import jax.numpy as jnp
 from absl.testing import parameterized
 from jax import random
 
-from src.utils import SumTree
+from jym.utils import SumTree
 
 
 class SumTreeTests(chex.TestCase, parameterized.TestCase):
