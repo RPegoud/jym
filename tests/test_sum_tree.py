@@ -10,7 +10,9 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
     @chex.variants(without_jit=True)
     def test_initialization(self):
         capacity = 4
-        sum_tree = self.variant(SumTree)(capacity)
+        batch_size = 2
+
+        sum_tree = self.variant(SumTree)(capacity, batch_size)
 
         assert sum_tree.capacity == capacity
 
@@ -20,24 +22,28 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
         Add a priority and test if it's updated correctly
         """
         capacity = 4
-        sum_tree = SumTree(capacity)
+        batch_size = 2
+
+        sum_tree = SumTree(capacity, batch_size)
         tree = jnp.zeros(2 * capacity - 1)
 
         priority = 1.5
-        tree, cursor = self.variant(sum_tree.add)(tree, priority, 0)
+        tree = self.variant(sum_tree.add)(tree, priority, 0)
 
-        assert tree[-capacity + cursor - 1] == priority
+        assert tree[capacity - 1] == priority
         assert tree[0] == priority  # check if the root is updated
 
     @chex.variants(with_jit=True, without_jit=True)
     def test_propagation(self):
         capacity = 4
-        sum_tree = SumTree(capacity)
+        batch_size = 2
+
+        sum_tree = SumTree(capacity, batch_size)
         tree = jnp.zeros(2 * capacity - 1)
 
         # add a priority and test propagation
         priority = 2.0
-        tree, _ = self.variant(sum_tree.add)(tree, priority, 0)
+        tree = self.variant(sum_tree.add)(tree, priority, 0)
 
         assert tree[0] == priority  # root should be updated
         assert tree[1] == priority  # first internal node should be updated
@@ -51,12 +57,14 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
     )
     def test_get_leaf(self, seed: int):
         capacity = 4
-        sum_tree = SumTree(capacity)
+        batch_size = 2
+
+        sum_tree = SumTree(capacity, batch_size)
         tree = jnp.zeros(2 * capacity - 1)
 
         # Add priorities and test leaf retrieval
         for i in range(capacity):
-            tree, _ = self.variant(sum_tree.add)(tree, float(i + 1), i)
+            tree = self.variant(sum_tree.add)(tree, float(i + 1), i)
 
         value = random.uniform(random.PRNGKey(seed), (1,), minval=0, maxval=tree[0])[0]
         _, sample_idx, leaf_val = self.variant(sum_tree.get_leaf)(tree, value)
@@ -67,12 +75,14 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
     @chex.variants(with_jit=True, without_jit=True)
     def test_sample_batch(self):
         capacity = 4
-        sum_tree = SumTree(capacity)
+        batch_size = 2
+
+        sum_tree = SumTree(capacity, batch_size)
         tree = jnp.zeros(2 * capacity - 1)
 
         # Add priorities
         for i in range(capacity):
-            tree, _ = self.variant(sum_tree.add)(tree, float(i + 1), i)
+            tree = self.variant(sum_tree.add)(tree, float(i + 1), i)
 
         batch_size = 8
         values = random.uniform(random.PRNGKey(0), (batch_size,))
@@ -89,14 +99,15 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
         priorities of their child nodes.
         """
         capacity = 5
+        batch_size = 2
+
         tree = jnp.zeros(2 * capacity - 1)
-        sum_tree = SumTree(capacity)
+        sum_tree = SumTree(capacity, batch_size)
 
-        expected = jnp.array([70.0, 48.0, 22.0, 30.0, 18.0, 10.0, 12.0, 14.0, 16.0])
+        expected = jnp.array([25.0, 10.0, 15.0, 7.0, 3.0, 8.0, 7.0, 3.0, 4.0])
 
-        tree, cursor = self.variant(sum_tree.add)(tree, 0.0, 0)
-        values = jnp.arange(10) * 2
+        values = jnp.arange(10)
         for i in range(10):
-            tree, cursor = self.variant(sum_tree.add)(tree, values[i], cursor)
+            tree = self.variant(sum_tree.add)(tree, values[i], i)
 
         assert jnp.all(tree == expected)
