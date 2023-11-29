@@ -18,56 +18,56 @@ class SumTree:
     SumTree utilities used to manipulate an external tree state
     """
 
-    def __init__(self, capacity: int) -> None:
+    def __init__(self, capacity: int, batch_size: int) -> None:
         """
         Args:
             capacity (int): The maximum number of leaves (priorities/experiences)
             the tree can hold.
+            batch_size (int): The number of experiences to sample in a minibatch
         """
         self.capacity = capacity
+        self.batch_size = batch_size
 
-    def add(
-        self, tree: jnp.ndarray, priority: float, cursor: int
-    ) -> Tuple[jnp.ndarray, int]:
+    def add(self, tree_state: jnp.ndarray, priority: float, cursor: int) -> jnp.ndarray:
         """
         Add a new priority to the tree and update the cursor position.
 
         Args:
-            tree (jnp.ndarray): The current state of the sum tree.
+            tree_state (jnp.ndarray): The current state of the sum tree.
             priority (float): The priority value of the new experience.
             cursor (int): The current write cursor in the tree.
 
         Returns:
-            Tuple[jnp.ndarray, int]: The updated tree and cursor.
+            jnp.ndarray: The updated tree_state and cursor.
         """
         idx = cursor + self.capacity - 1
-        tree = self.update(tree, idx, priority)
+        tree_state = self.update(tree_state, idx, priority)
         cursor = lax.select(cursor + 1 >= self.capacity, 0, cursor + 1)
-        return tree, cursor
+        return tree_state
 
-    def update(self, tree: jnp.ndarray, idx: int, priority: float) -> jnp.ndarray:
+    def update(self, tree_state: jnp.ndarray, idx: int, priority: float) -> jnp.ndarray:
         """
         Update a priority in the tree at a specific index and propagate the change.
 
         Args:
-            tree (jnp.ndarray): The current state of the sum tree.
+            tree_state (jnp.ndarray): The current state of the sum tree.
             idx (int): The index in the tree where the priority is to be updated.
             priority (float): The new priority value.
 
         Returns:
             jnp.ndarray: The updated tree after the priority change.
         """
-        change = priority - tree.at[idx].get()
-        tree = tree.at[idx].set(priority)
-        return self._propagate(tree, idx, change)
+        change = priority - tree_state.at[idx].get()
+        tree_state = tree_state.at[idx].set(priority)
+        return self._propagate(tree_state, idx, change)
 
     @staticmethod
-    def _propagate(tree: jnp.ndarray, idx: int, change: float) -> jnp.ndarray:
+    def _propagate(tree_state: jnp.ndarray, idx: int, change: float) -> jnp.ndarray:
         """
         Propagate the changes in priority up the tree from a given index.
 
         Args:
-            tree (jnp.ndarray): The current state of the sum tree.
+            tree_state (jnp.ndarray): The current state of the sum tree.
             idx (int): The index of the tree where the priority was updated.
             change (float): The amount of change in priority.
 
@@ -85,39 +85,39 @@ class SumTree:
             tree = tree.at[parent_idx].add(change)
             return parent_idx, tree
 
-        val_init = (idx, tree)
-        _, tree = lax.while_loop(_cond_fn, _while_body, val_init)
-        return tree
+        val_init = (idx, tree_state)
+        _, tree_state = lax.while_loop(_cond_fn, _while_body, val_init)
+        return tree_state
 
     @partial(vmap, in_axes=(None, None, 0))
-    def sample_batch(self, tree, value):
+    def sample_batch(self, tree_state, value):
         """
         Applies the get_leaf function to a batch of values,
         used for sampling from the replay buffer.
         """
-        return self.get_leaf(tree, value)
+        return self.get_leaf(tree_state, value)
 
-    def get_leaf(self, tree: jnp.ndarray, value: float) -> Tuple[int, int, float]:
+    def get_leaf(self, tree_state: jnp.ndarray, value: float) -> Tuple[int, int, float]:
         """
         Retrieve the index and value of a leaf based on a given value.
 
         Args:
-            tree (jnp.ndarray): The current state of the sum tree.
+            tree_state (jnp.ndarray): The current state of the sum tree.
             value (float): A value to query the tree with.
 
         Returns:
             Tuple[int, int, float]: The index of the tree, index of the sample, and value of the leaf.
         """
-        idx = self._retrieve(tree, value)
+        idx = self._retrieve(tree_state, value)
         sample_idx = idx - self.capacity + 1
-        return idx, sample_idx, tree[idx]
+        return idx, sample_idx, tree_state[idx]
 
-    def _retrieve(self, tree: jnp.ndarray, value: float):
+    def _retrieve(self, tree_state: jnp.ndarray, value: float):
         """
         Recursively search the tree to find a leaf node based on a given value.
 
         Args:
-            tree (jnp.ndarray): The current state of the sum tree.
+            tree_state (jnp.ndarray): The current state of the sum tree.
             value (float): The value used to find a leaf node.
 
         Returns:
@@ -128,14 +128,16 @@ class SumTree:
             idx, _ = val
             left = 2 * idx + 1
             # continue until a leaf node is reached
-            return left < len(tree)
+            return left < len(tree_state)
 
         def _while_body(val: tuple):
             idx, value = val
             left = 2 * idx + 1
             right = left + 1
-            new_idx = lax.select(value <= tree[left], left, right)
-            new_value = lax.select(value <= tree[left], value, value - tree[left])
+            new_idx = lax.select(value <= tree_state[left], left, right)
+            new_value = lax.select(
+                value <= tree_state[left], value, value - tree_state[left]
+            )
             return new_idx, new_value
 
         val_init = (0, value)
