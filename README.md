@@ -1,8 +1,22 @@
 # **JYM (Jax Gym)**
 
-![image](https://github.com/RPegoud/jym/assets/60786847/f7939998-dacc-4ca5-acf2-56a0dc018377)
+<h1 align="center">
+  <a>
+    <img src="https://github.com/RPegoud/jym/assets/60786847/f7939998-dacc-4ca5-acf2-56a0dc018377" width="400" /></a><br>
+  <b>JAX implementations of standard RL algorithms and vectorized environments</b><br>
+</h1>
 
-Welcome to the JAX Gym (JYM for short), this repository contains JAX implementations of standard RL algorithms and vectorized environments.
+<p align="center">
+<a href="https://github.com/RPegoud/jym/issues">
+  <img src="https://img.shields.io/github/issues/RPegoud/jym" /></a>
+<a href="https://github.com/RPegoud/jym/actions/workflows/lint_and_test.yaml">
+        <img src="https://github.com/RPegoud/jym/actions/workflows/lint_and_test.yaml/badge.svg" /></a>
+        <a href= "https://github.com/psf/black">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+        <a href="https://github.com/RPegoud/jym/blob/main/LICENSE">
+  <img src="https://img.shields.io/github/license/RPegoud/jym" /></a>
+
+</p>
 
 <table>
   <tr>
@@ -27,12 +41,12 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
         Haiku
       </a>
     </td>
-    <td align="left">
+    <!-- <td align="left">
       <a  target="blank">
         <img align="center" href="https://flax.readthedocs.io/en/latest/" src="https://raw.githubusercontent.com/google/flax/main/images/flax_logo_250px.png" alt="Flax" height="40" width="40" />
         Flax
       </a>
-    </td>
+    </td> -->
     <td align="left">
       <a target="blank">
         <img align="center"  href="https://optax.readthedocs.io/en/latest/" src="https://optax.readthedocs.io/en/latest/_static/logo.svg" alt="Optax" height="40" width="40" />
@@ -51,38 +65,44 @@ Welcome to the JAX Gym (JYM for short), this repository contains JAX implementat
 * ✅ **Easy installation** using **Poetry** virtual environments
 * ✍️ **Code walkthroughs**:
   * [***Vectorize and Parallelize RL Environments with JAX: Q-learning at the Speed of Light⚡***](https://towardsdatascience.com/vectorize-and-parallelize-rl-environments-with-jax-q-learning-at-the-speed-of-light-49d07373adf5), published in ***Towards Data Science***
+  * [***A Gentle Introduction to Deep Reinforcement Learning in JAX 🕹️***](https://towardsdatascience.com/a-gentle-introduction-to-deep-reinforcement-learning-in-jax-c1e45a179b92), published in ***Towards Data Science***, selected as part of the ***"Getting Started"*** column
 
 ## ✅ ***Progress***
 
-* 🤖 Algorithms:
-  * Bandits
-    * Simple Bandits ($\epsilon$-Greedy policy)
-  * Tabular
-    * Q-learning
-    * Expected SARSA
-    * Double Q-learning
-  * Deep RL:
-    * Deep Q-Network (DQN)
-* 🌍 Environments:
-  * Bandits
-    * Casino *(fancy name for K-armed Bandits)*
-  * Tabular
-    * GridWorld
-    * Cliff Walking
-  * Continuous Control
-    * CartPole
-  * MinAtar:
-    * Breakout
+### 🤖 Algorithms
+
+| Type    | Name                                      | Source                  |
+| ------- | ----------------------------------------- | ----------------------- |
+| Bandits | [Simple Bandits ($\epsilon$-Greedy policy)](https://github.com/RPegoud/jym/blob/main/jym/agents/simple_bandit.py) | Sutton & Barto, 1998    |
+| Tabular | [Q-learning](https://github.com/RPegoud/jym/blob/main/jym/agents/q_learning.py)                                | Watkins & Dayan, 1992   |
+| Tabular | [Expected SARSA](https://github.com/RPegoud/jym/blob/main/jym/agents/expected_sarsa.py)                           | Van Seijen et al., 2009 |
+| Tabular | [Double Q-learning](https://github.com/RPegoud/jym/blob/main/jym/agents/double_q_learning.py)                         | Van Hasselt, 2010       |
+| Deep RL | [Deep Q-Network (DQN)](https://github.com/RPegoud/jym/blob/main/jym/agents/dqn.py)                      | Mnih et al., 2015       |
+
+### 🌍 Environments
+
+| Type               | Name                     | Source                          |
+| ------------------ | ------------------------ | ------------------------------- |
+| Bandits            | [Casino (K-armed Bandits)](https://github.com/RPegoud/jym/blob/main/jym/envs/bandits/k_armed_bandits.py) | Sutton & Barto, 1998            |
+| Tabular            | [GridWorld](https://github.com/RPegoud/jym/blob/main/jym/envs/grids/grid_world.py)               | -                               |
+| Tabular            | [Cliff Walking](https://github.com/RPegoud/jym/blob/main/jym/envs/grids/cliff_walking.py)            | -                               |
+| Continuous Control | [CartPole](https://github.com/RPegoud/jym/blob/main/jym/envs/control/cartpole.py)                 | Barto, Sutton, & Anderson, 1983 |
+| MinAtar            | [Breakout](https://github.com/RPegoud/jym/blob/main/jym/envs/minatar/breakout.py)                 | Young et al., 2019              |
 
 ## ⌛ ***Coming Soon***
 
-* 🤖 Algorithms:
-  * Bandits:
-    * UCB (Upper Confidence Bound)
-  * Tabular:
-    * Dyna-Q, Dyna-Q+
-* 🌍 Environments:
-  * MinAtar (mini Atari: Asterix, Breakout, Freeway, Seaquest, SpaceInvaders)
+### 🤖 Algorithms
+
+| Type    | Name                                       |
+| ------- | -----------------------------------------  |
+| Bandits              | UCB (Upper Confidence Bound) |
+| Tabular (model based)| Dyna-Q, Dyna-Q+ |
+
+### 🌍 Environments
+
+| Type               | Name                     |
+| ------------------ | ------------------------ |
+| MinAtar| Asterix, Freeway, Seaquest, SpaceInvaders |
 
 ## 🧪 ***Experiments***
 
