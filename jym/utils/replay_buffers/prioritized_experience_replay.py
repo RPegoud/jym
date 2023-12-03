@@ -28,21 +28,20 @@ class SumTree:
         self.capacity = capacity
         self.batch_size = batch_size
 
-    def add(self, tree_state: jnp.ndarray, priority: float, cursor: int) -> jnp.ndarray:
+    def add(self, tree_state: jnp.ndarray, idx: int, priority: float) -> jnp.ndarray:
         """
         Add a new priority to the tree and update the cursor position.
 
         Args:
             tree_state (jnp.ndarray): The current state of the sum tree.
             priority (float): The priority value of the new experience.
-            cursor (int): The current write cursor in the tree.
+            idx (int): The current write cursor in the tree.
 
         Returns:
             jnp.ndarray: The updated tree_state and cursor.
         """
-        idx = cursor + self.capacity - 1
+        idx = idx + self.capacity - 1
         tree_state = self.update(tree_state, idx, priority)
-        cursor = lax.select(cursor + 1 >= self.capacity, 0, cursor + 1)
         return tree_state
 
     def update(self, tree_state: jnp.ndarray, idx: int, priority: float) -> jnp.ndarray:
@@ -57,6 +56,8 @@ class SumTree:
         Returns:
             jnp.ndarray: The updated tree after the priority change.
         """
+        # ensures only leaf nodes are updated manually
+        idx = lax.select(idx >= self.capacity - 1, idx, idx + self.capacity - 1)
         change = priority - tree_state.at[idx].get()
         tree_state = tree_state.at[idx].set(priority)
         return self._propagate(tree_state, idx, change)
@@ -90,7 +91,7 @@ class SumTree:
         return tree_state
 
     @partial(vmap, in_axes=(None, None, 0))
-    def sample_batch(self, tree_state, value):
+    def sample_idx_batch(self, tree_state, value) -> Tuple[int, int, float]:
         """
         Applies the get_leaf function to a batch of values,
         used for sampling from the replay buffer.

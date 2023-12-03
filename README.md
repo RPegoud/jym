@@ -8,20 +8,20 @@
 
 <p align="center">
 <a href="https://github.com/RPegoud/jym/issues">
-  <img src="https://img.shields.io/github/issues/RPegoud/jym" /></a>
+<img src="https://img.shields.io/github/issues/RPegoud/jym" /></a>
 <a href="https://github.com/RPegoud/jym/actions/workflows/lint_and_test.yaml">
-        <img src="https://github.com/RPegoud/jym/actions/workflows/lint_and_test.yaml/badge.svg" /></a>
-        <a href= "https://github.com/psf/black">
-        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
-        <a href="https://github.com/RPegoud/jym/blob/main/LICENSE">
-  <img src="https://img.shields.io/github/license/RPegoud/jym" /></a>
-
+<img src="https://github.com/RPegoud/jym/actions/workflows/lint_and_test.yaml/badge.svg" /></a>
+<a href= "https://github.com/psf/black">
+<img src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+<a href="https://github.com/RPegoud/jym/blob/main/LICENSE">
+<img src="https://img.shields.io/github/license/RPegoud/jym" /></a>
+<a href="https://github.com/astral-sh/ruff">
+<img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json"/></a>
 </p>
 
+## 🚀 ***Stack***
+
 <table>
-  <tr>
-    <th colspan="5" align="left">🚀 Stack:</th>
-  </tr>
   <tr>
     <td align="left">
       <a target="blank">
@@ -53,6 +53,12 @@
         Optax
       </a>
     </td>
+  <td align="left">
+      <a target="blank">
+        <img align="center" href="https://chex.readthedocs.io/en/latest/" src="https://avatars.githubusercontent.com/u/144367226?s=280&v=4" alt="Haiku" height="40" width="40" />
+        Chex
+      </a>
+    </td>
   </tr>
 </table>
 
@@ -73,7 +79,7 @@
 
 | Type    | Name                                      | Source                  |
 | ------- | ----------------------------------------- | ----------------------- |
-| Bandits | [Simple Bandits ($\epsilon$-Greedy policy)](https://github.com/RPegoud/jym/blob/main/jym/agents/simple_bandit.py) | Sutton & Barto, 1998    |
+| Bandits | [Simple Bandits (ε-Greedy policy)](https://github.com/RPegoud/jym/blob/main/jym/agents/simple_bandit.py) | Sutton & Barto, 1998    |
 | Tabular | [Q-learning](https://github.com/RPegoud/jym/blob/main/jym/agents/q_learning.py)                                | Watkins & Dayan, 1992   |
 | Tabular | [Expected SARSA](https://github.com/RPegoud/jym/blob/main/jym/agents/expected_sarsa.py)                           | Van Seijen et al., 2009 |
 | Tabular | [Double Q-learning](https://github.com/RPegoud/jym/blob/main/jym/agents/double_q_learning.py)                         | Van Hasselt, 2010       |
