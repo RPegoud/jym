@@ -1,16 +1,113 @@
 from functools import partial
-from typing import Tuple
+from typing import List, Tuple
 
 import jax.numpy as jnp
-from jax import lax, vmap
+from jax import lax, random, tree_map, vmap
 
 from .base_buffer import BaseReplayBuffer
+from .dataclasses import Experience
 
 
 class PrioritizedExperienceReplay(BaseReplayBuffer):
-    def __init__(self, buffer_size: int, batch_size: int) -> None:
+    """
+    Prioritized Experience Replay Buffer
+
+    Source: https://arxiv.org/pdf/1511.05952.pdf
+    """
+
+    def __init__(
+        self, buffer_size: int, batch_size: int, alpha: float, beta: float
+    ) -> None:
         super().__init__(buffer_size, batch_size)
-        self.sum_tree = SumTree(buffer_size)
+        self.sum_tree = SumTree(buffer_size, batch_size)
+        self.alpha = alpha
+        self.beta = beta
+
+    def add(
+        self,
+        tree_state: jnp.ndarray,
+        buffer_state: dict,
+        idx: int,
+        experience: Experience,
+    ) -> Tuple[dict, jnp.ndarray]:
+        """
+        Adds an experience to the replay buffer and
+        its priority to the sum tree.
+
+        Returns:
+            Tuple[dict, jnp.ndarray]: the updated buffer_state and
+            tree_state
+        """
+        # assigns maximal priority to the new experience
+        priorities = tree_state[-self.buffer_size :]
+        # TODO: define the initialization interval
+        # either [1.0, max(prio)] or [max(prio), +inf)
+        max_priority = lax.select(
+            jnp.count_nonzero(priorities) > 0,
+            jnp.max(priorities),
+            1.0,
+        )
+        experience = experience.replace(priority=max_priority)
+
+        # add the experience to the sum tree and the replay buffer
+        idx = idx % self.buffer_size
+        tree_state = self.sum_tree.add(tree_state, idx, max_priority)
+
+        # set experience fields
+        for field in experience:
+            buffer_state[field] = buffer_state[field].at[idx].set(experience[field])
+
+        return buffer_state, tree_state
+
+    def update(self, tree_state: jnp.ndarray, td_error: float, idx: int) -> jnp.ndarray:
+        """
+        Updates the priority of an experience using alpha.
+
+        Returns:
+            jnp.ndarray: the updated tree_state
+        """
+        priority = td_error**self.alpha
+        return self.sum_tree.update(tree_state, idx, priority)
+
+    def sample(
+        self,
+        key: random.PRNGKey,
+        buffer_state: dict,
+        tree_state: jnp.ndarray,
+    ) -> Tuple[dict[Experience], List[float]]:
+        """
+        Samples from the sum tree using the cumulative probability
+        distribution.
+
+        Returns:
+            Tuple[Experience]: a tuple of `capacity` experiences
+        """
+
+        @partial(vmap, in_axes=(0))
+        def sample_experiences(indexes: List[int]) -> Tuple[Experience]:
+            """
+            Returns a batch of experiences given input indexes.
+            """
+            return tree_map(lambda x: x[indexes], buffer_state)
+
+        # sample from the sum tree
+        total_priority = tree_state[0]
+        values = random.uniform(
+            key,
+            shape=(self.batch_size,),
+            minval=0,
+            maxval=total_priority,
+        )
+        _, samples_idx, leaf_values = self.sum_tree.sample_idx_batch(tree_state, values)
+
+        # compute importance weights
+        priorities = tree_state[-self.buffer_size :]
+        N = jnp.count_nonzero(priorities)
+        importance_weights = (1.0 / (N * leaf_values)) ** -self.beta
+        # normalize weights
+        importance_weights /= importance_weights.max()
+
+        return sample_experiences(samples_idx), importance_weights
 
 
 class SumTree:

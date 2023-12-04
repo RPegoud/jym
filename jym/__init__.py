@@ -25,6 +25,7 @@ from .policies import (
 )
 from .utils import (
     BaseReplayBuffer,
+    Experience,
     PrioritizedExperienceReplay,
     SumTree,
     UniformReplayBuffer,

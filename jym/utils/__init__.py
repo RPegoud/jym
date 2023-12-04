@@ -1,5 +1,6 @@
 from .replay_buffers import (
     BaseReplayBuffer,
+    Experience,
     PrioritizedExperienceReplay,
     SumTree,
     UniformReplayBuffer,
