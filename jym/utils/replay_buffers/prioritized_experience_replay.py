@@ -10,7 +10,7 @@ from .dataclasses import Experience
 
 class PrioritizedExperienceReplay(BaseReplayBuffer):
     """
-    Prioritized Experience Replay Buffer
+    Prioritized Experience Replay Buffer.
 
     Source: https://arxiv.org/pdf/1511.05952.pdf
     """
@@ -35,8 +35,7 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
         its priority to the sum tree.
 
         Returns:
-            Tuple[dict, jnp.ndarray]: the updated buffer_state and
-            tree_state
+            Tuple[dict, jnp.ndarray]: the updated buffer_state and tree_state
         """
         # assigns maximal priority to the new experience
         priorities = tree_state[-self.buffer_size :]
@@ -74,13 +73,15 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
         key: random.PRNGKey,
         buffer_state: dict,
         tree_state: jnp.ndarray,
-    ) -> Tuple[dict[Experience], List[float]]:
+    ) -> Tuple[dict[Experience], List[float], random.PRNGKey]:
         """
-        Samples from the sum tree using the cumulative probability
-        distribution.
+        Samples from the sum tree using the cumulative probability distribution.
 
         Returns:
-            Tuple[Experience]: a tuple of `capacity` experiences
+            Tuple[dict[Experience], List[float], random.PRNGKey]:
+            * a dictionary of `capacity` experiences
+            * the associated importance weights
+            * the split random key
         """
 
         @partial(vmap, in_axes=(0))
@@ -92,8 +93,9 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
 
         # sample from the sum tree
         total_priority = tree_state[0]
+        key, subkey = random.split(key)
         values = random.uniform(
-            key,
+            subkey,
             shape=(self.batch_size,),
             minval=0,
             maxval=total_priority,
@@ -107,7 +109,9 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
         # normalize weights
         importance_weights /= importance_weights.max()
 
-        return sample_experiences(samples_idx), importance_weights
+        experiences_dict = sample_experiences(samples_idx)
+
+        return experiences_dict, samples_idx, importance_weights, subkey
 
 
 class SumTree:
@@ -118,8 +122,7 @@ class SumTree:
     def __init__(self, capacity: int, batch_size: int) -> None:
         """
         Args:
-            capacity (int): The maximum number of leaves (priorities/experiences)
-            the tree can hold.
+            capacity (int): The maximum number of leaves (priorities/experiences) the tree can hold.
             batch_size (int): The number of experiences to sample in a minibatch
         """
         self.capacity = capacity
@@ -159,6 +162,18 @@ class SumTree:
         tree_state = tree_state.at[idx].set(priority)
         return self._propagate(tree_state, idx, change)
 
+    def batch_update(
+        self, tree_state, sample_indexes: List[int], td_errors: List[float]
+    ) -> jnp.ndarray:
+        """
+        Updates the tree state for with a batch of td errors.
+        """
+
+        def _fori_body(i: int, val: tuple):
+            return self.update(val, sample_indexes[i], td_errors[i])
+
+        return lax.fori_loop(0, self.batch_size, _fori_body, tree_state)
+
     @staticmethod
     def _propagate(tree_state: jnp.ndarray, idx: int, change: float) -> jnp.ndarray:
         """
@@ -192,6 +207,9 @@ class SumTree:
         """
         Applies the get_leaf function to a batch of values,
         used for sampling from the replay buffer.
+
+        Returns:
+            Tuple[int, int, float]: The index of the tree, index of the sample, and value of the leaf.
         """
         return self.get_leaf(tree_state, value)
 

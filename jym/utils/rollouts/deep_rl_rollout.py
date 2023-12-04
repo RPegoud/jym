@@ -27,7 +27,7 @@ def deep_rl_rollout(
     epsilon_start: float,
     epsilon_end: float,
     decay_rate: float,
-):
+) -> dict:
     @loop_tqdm(timesteps)
     @jit
     def _fori_body(i: int, val: tuple):

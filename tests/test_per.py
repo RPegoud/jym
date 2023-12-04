@@ -10,7 +10,6 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
     def test_initialization(self):
         buffer_size = 16
         batch_size = 8
-
         alpha, beta = 0.5, 0.5
         per = PrioritizedExperienceReplay(buffer_size, batch_size, alpha, beta)
 
@@ -105,7 +104,7 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
                 reward=jnp.float32(1),
                 next_state=jnp.ones(4) * 2,
                 done=jnp.bool_(False),
-                priority=i,
+                priority=i,  # priorities from 0 to 9
             )
             for i in range(buffer_size)
         }
@@ -115,7 +114,7 @@ class SumTreeTests(chex.TestCase, parameterized.TestCase):
             )
 
         key = random.PRNGKey(0)
-        experience_batch, weights = self.variant(per.sample)(
+        experience_batch, _, _, key = self.variant(per.sample)(
             key, buffer_state, tree_state
         )
 
