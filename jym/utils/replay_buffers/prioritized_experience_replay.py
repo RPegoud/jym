@@ -39,13 +39,7 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
         """
         # assigns maximal priority to the new experience
         priorities = tree_state[-self.buffer_size :]
-        # TODO: define the initialization interval
-        # either [1.0, max(prio)] or [max(prio), +inf)
-        max_priority = lax.select(
-            jnp.count_nonzero(priorities) > 0,
-            jnp.max(priorities),
-            1.0,
-        )
+        max_priority = jnp.maximum(jnp.max(priorities), 1.0)
         experience = experience.replace(priority=max_priority)
 
         # add the experience to the sum tree and the replay buffer

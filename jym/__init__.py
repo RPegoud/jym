@@ -1,5 +1,6 @@
 from .agents import (
     DQN,
+    DQN_PER,
     BaseDeepRLAgent,
     BaseTabularAgent,
     Double_Q_learning,
@@ -35,6 +36,7 @@ from .utils import (
     bandits_rollout,
     deep_rl_rollout,
     minatar_rollout,
+    per_rollout,
     plot_path,
     tabular_double_rollout,
     tabular_parallel_rollout,
