@@ -23,7 +23,7 @@ def compute_td_error(
     reward: jnp.ndarray,
     next_state: jnp.ndarray,
     done: jnp.ndarray,
-    priority: jnp.ndarray,  # unused
+    priority: jnp.ndarray,  # included for **Experience unpacking
 ) -> List[float]:
     """
     Computes the td errors for a batch of experiences.
@@ -81,6 +81,7 @@ def per_rollout(
         epsilon = epsilon_decay_fn(current_step=i, **decay_params)
         action, action_key = agent.act(action_key, online_net_params, obs, epsilon)
         state, next_state, reward, done, env_key = env.step(state, env_key, action)
+
         experience = Experience(
             state=env._get_obs(state),
             action=action,

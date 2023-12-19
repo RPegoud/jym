@@ -28,6 +28,7 @@ pytest = "^7.4.2"
 jax-tqdm = "^0.1.1"
 python-dotenv = "^1.0.0"
 flax = "^0.7.5"
+gymnax = "^0.0.6"
 
 [tool.ruff]
 extend-ignore = ["E501"]

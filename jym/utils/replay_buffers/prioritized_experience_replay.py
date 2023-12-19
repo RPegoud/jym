@@ -39,7 +39,7 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
         """
         # assigns maximal priority to the new experience
         priorities = tree_state[-self.buffer_size :]
-        max_priority = jnp.maximum(jnp.max(priorities), 1.0)
+        max_priority = jnp.maximum(jnp.max(priorities), 1.0) # TODO: is max(prio) necessary ?
         experience = experience.replace(priority=max_priority)
 
         # add the experience to the sum tree and the replay buffer
@@ -99,7 +99,7 @@ class PrioritizedExperienceReplay(BaseReplayBuffer):
         # compute importance weights
         priorities = tree_state[-self.buffer_size :]
         N = jnp.count_nonzero(priorities)
-        importance_weights = (1.0 / (N * leaf_values)) ** -self.beta
+        importance_weights = (1.0 / (N * leaf_values)) ** self.beta # TODO: add epsilon if needed
         # normalize weights
         importance_weights /= importance_weights.max()
 
