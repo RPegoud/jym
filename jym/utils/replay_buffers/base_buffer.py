@@ -1,7 +1,4 @@
 from abc import ABC, abstractmethod
-from functools import partial
-
-from jax import jit
 
 
 class BaseReplayBuffer(ABC):
@@ -13,7 +10,6 @@ class BaseReplayBuffer(ABC):
         self.buffer_size = buffer_size
         self.batch_size = batch_size
 
-    @partial(jit, static_argnums=(0))
     def add(
         self,
         buffer_state: dict,

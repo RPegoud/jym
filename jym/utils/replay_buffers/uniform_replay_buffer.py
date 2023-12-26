@@ -1,6 +1,6 @@
 from functools import partial
 
-from jax import jit, random, tree_map, vmap
+from jax import random, tree_map, vmap
 
 from .base_buffer import BaseReplayBuffer
 
@@ -13,7 +13,6 @@ class UniformReplayBuffer(BaseReplayBuffer):
     ) -> None:
         super(UniformReplayBuffer, self).__init__(buffer_size, batch_size)
 
-    @partial(jit, static_argnums=(0))
     def sample(
         self,
         key: random.PRNGKey,

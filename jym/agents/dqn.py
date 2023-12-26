@@ -50,18 +50,14 @@ class DQN(BaseDeepRLAgent):
         )
         return action, subkey
 
-    @partial(jit, static_argnames=("self", "optimizer"))
     def update(
         self,
         online_net_params: dict,
         target_net_params: dict,
         optimizer: optax.GradientTransformation,
         optimizer_state: jnp.ndarray,
-        experiences: dict[
-            str : jnp.ndarray
-        ],  # states, actions, next_states, dones, rewards
+        experiences: tuple[jnp.ndarray],  # states, actions, rewards, next_states, dones
     ):
-        @jit
         def _batch_loss_fn(
             online_net_params: dict,
             target_net_params: dict,
@@ -82,8 +78,14 @@ class DQN(BaseDeepRLAgent):
                 next_state,
                 done,
             ):
-                target = reward + (1 - done) * self.discount * jnp.max(
-                    self.model.apply(target_net_params, None, next_state),
+                # if done = True, target = reward
+                target = lax.stop_gradient(
+                    reward
+                    + (1 - done)
+                    * self.discount
+                    * jnp.max(
+                        self.model.apply(target_net_params, None, next_state),
+                    )
                 )
                 prediction = self.model.apply(online_net_params, None, state)[action]
                 return jnp.square(target - prediction)
@@ -129,9 +131,7 @@ class DQN(BaseDeepRLAgent):
         target_net_params: dict,
         optimizer: optax.GradientTransformation,
         optimizer_state: jnp.ndarray,
-        experiences: dict[
-            str : jnp.ndarray
-        ],  # states, actions, next_states, dones, rewards
+        experiences: tuple[jnp.ndarray],  # states, actions, rewards, next_states, dones
     ):
         return vmap(
             DQN.update,
